@@ -23,6 +23,8 @@ numLoops = int(sys.argv[1])
 
 baseURL = sys.argv[2]
 hub = sys.argv[4]
+count = sys.argv[5]
+size = sys.argv[6]
 
 #--- Read List of PIIs -----------------
 PII=[]
@@ -127,9 +129,9 @@ def metricsCollect(dtitl,ID):
                 #       if sections > 0:
                 #               print(browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+PII+'\t'+sections)
                 #       else:
-                        print(browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+ID)
+                        print(size+'\t'+count+'\t'+browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+ID)
                 else:
-                        print(browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+dtitl)
+                        print(size+'\t'+count+'\t'+browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+dtitl)
         except:
                 if 'Pii' in globals():
                         print('Unable to print perfTiming details, PII:'+Pii)
@@ -159,7 +161,7 @@ def metricsCollect(dtitl,ID):
 idx=0
 
 while numLoops > 0:
-        print('iteration: '+str(numLoops)+' browser:'+browser)
+        #print('iteration: '+str(numLoops)+' browser:'+browser)
         """
         Define capabilities of remote webdriver
                 Specifically: assign browser type
@@ -246,7 +248,8 @@ while numLoops > 0:
                         #print(dtitl[:50])
                 except:
                         egress(numLoops,idx)
-                if 'ScienceDirect.com' in dtitl:
+                """
+		if 'ScienceDirect.com' in dtitl:
                         titl='SD Content Delivery'
                         time.sleep(.25)
                         try:
@@ -292,7 +295,7 @@ while numLoops > 0:
                 else:
                         titl='Other'
                         pass
-
+		"""
                 #secStr=str(len(secs))
                 #metricsCollect(titl,Pii,secStr)
                 if artLoop > 0:
