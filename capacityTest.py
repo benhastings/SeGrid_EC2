@@ -9,8 +9,8 @@ size=sys.argv[3]
 hub=sys.argv[4]
 
 iter=0
-browsers=1
 while (iter < loop):
+	browsers=1
         while (browsers < iterations):
                 print('browsers:'+str(browsers))
                 #Popen('python gridExecuteCapacity.py '+str(browsers)+' 0 www.sciencedirect.com 5 '+hub+' >> '+size+'-'+str(browsers), shell=True).wait()
