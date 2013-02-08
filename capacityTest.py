@@ -4,10 +4,10 @@ import time
 import datetime
 
 iterations=int(sys.argv[1])
-size=sys.argv[2]
-hub=sys.argv[3]
+loop=int(sys.argv[2])
+size=sys.argv[3]
+hub=sys.argv[4]
 
-loop=5
 iter=0
 browsers=1
 while (iter < loop):
