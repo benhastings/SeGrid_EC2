@@ -8,7 +8,7 @@ import csv
 import random
 import sys
 import urllib2
-from pyvirtualdisplay import Display
+#from pyvirtualdisplay import Display
 
 #--- Start Virtual Display -------------------
 #display = Display(visible=1, size=(1280, 800))
