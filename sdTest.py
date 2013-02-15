@@ -8,11 +8,6 @@ import csv
 import random
 import sys
 import urllib2
-from pyvirtualdisplay import Display
-
-#--- Start Virtual Display -------------------
-#display = Display(visible=1, size=(1280, 800))
-#display.start()
 
 #--- Browser definition for Grid usage ----------
 
@@ -230,7 +225,7 @@ while numLoops > 0:
 
         while artLoop > 0:
                 #--- Define Random Value ---------------
-                #idx = int(random.random()*250000)
+                idx = int(random.random()*250000)
                 idxPii=idx
                 Pii=str(PII[idxPii]).strip('[\']')
                 titl = 'SD Content Delivery'
@@ -240,7 +235,7 @@ while numLoops > 0:
                         getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
                 except urllib2.URLError:
                         pass
-                time.sleep(.25)
+                time.sleep(.5)
                 try:
                         dtitl=driver.title[:50]
                         #print(dtitl[:50])
@@ -248,42 +243,43 @@ while numLoops > 0:
                         egress(numLoops,idx)
                 if 'ScienceDirect.com' in dtitl:
                         titl='SD Content Delivery'
-                        time.sleep(.25)
-                        try:
-                                secs=driver.find_elements_by_class_name("svArticle")
-                                #print 'Sections:'+str(len(secs))
-                                if len(secs) > 0 and numLoops%2 > 0:
-                                        if len(secs) > 2:
-                                                #print 'scroll to 1'
-                                                driver.execute_script("arguments[0].scrollIntoView();",secs[1])
-                                                time.sleep(.75)
-                                        if len(secs) > 10:
-                                                #print 'scroll to 9'
-                                                driver.execute_script("arguments[0].scrollIntoView();",secs[9])
-                                                time.sleep(.75)
-                                        if len(secs) > 30:
-                                                #print 'scroll to 29'
-                                                driver.execute_script("arguments[0].scrollIntoView();",secs[29])
-                                                time.sleep(.75)
-                                        if len(secs) > 70:
-                                                #print 'scroll to 69'
-                                                driver.execute_script("arguments[0].scrollIntoView();",secs[69])
-                                                time.sleep(.75)
+                        time.sleep(.5)
+                	if (artLoop%2==1):        
+				try:
+                                	secs=driver.find_elements_by_class_name("svArticle")
+	                                #print 'Sections:'+str(len(secs))
+        	                        if len(secs) > 0 and numLoops%2 > 0:
+                	                        if len(secs) > 2:
+                        	                        #print 'scroll to 1'
+                                	                driver.execute_script("arguments[0].scrollIntoView();",secs[1])
+                                        	        time.sleep(.75)
+	                                        if len(secs) > 10:
+        	                                        #print 'scroll to 9'
+                	                                driver.execute_script("arguments[0].scrollIntoView();",secs[9])
+                        	                        time.sleep(.75)
+                                	        if len(secs) > 30:
+	                                                #print 'scroll to 29'
+        	                                        driver.execute_script("arguments[0].scrollIntoView();",secs[29])
+                	                                time.sleep(.75)
+                        	                if len(secs) > 70:
+                                	                #print 'scroll to 69'
+                                        	        driver.execute_script("arguments[0].scrollIntoView();",secs[69])
+                                                	time.sleep(.75)
 
 
-                                try:
-                                        refs = driver.find_element_by_class_name("references")
-                                        scStart = time.time()
-                                        #print 'scroll to References'
-                                        driver.execute_script("arguments[0].scrollIntoView();",refs)
-                                        try:
-                                                wait.until(lambda driver: driver.find_elements_by_partial_link_text('Cited By in Scopus ('))
-                                        except: # end waiting for references to resolve
-                                                pass
-                                except: # end try scrolling to references
-                                        pass
-                        except: # end try scrolling
-                                pass
+	                                try:
+        	                                refs = driver.find_element_by_class_name("references")
+                	                        scStart = time.time()
+                        	                #print 'scroll to References'
+                                	        driver.execute_script("arguments[0].scrollIntoView();",refs)
+                                        	try:
+                                                	wait.until(lambda driver: driver.find_elements_by_partial_link_text('Cited By in Scopus ('))
+	                                        except: # end waiting for references to resolve
+        	                                        pass
+                	                except: # end try scrolling to references
+                        	                pass
+	                        except: # end try scrolling
+        	                        pass
 
 
                 elif 'Article Locator' in dtitl:
@@ -315,7 +311,8 @@ while numLoops > 0:
                                         time.sleep(.5)
                                         #--- Submit Form --------
                                         getPage(driver.find_element_by_xpath("//button[contains(@title,'Submit quick search')]").click())
-                                except:
+                                	time.sleep(1)
+				except:
                                         print 'Search form not found'
                                         pass
                         
@@ -332,7 +329,8 @@ while numLoops > 0:
                                         idx=idx+jrnLoop
                                         jIdx=idx%2500
                                         getPage(driver.get("http://"+baseURL+"/science/journal/"+str(JRNL[jIdx]).strip('[\']')))
-                                        jrnLoop=jrnLoop-1
+                                        time.sleep(1)
+					jrnLoop=jrnLoop-1
 			
         except:
                 pass
@@ -343,7 +341,5 @@ while numLoops > 0:
         idx=idx+1
         egress()
 
-#--- Stop Virtual Display ------------
-#display.stop()
                                     
 
