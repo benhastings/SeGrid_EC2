@@ -158,10 +158,10 @@ while numLoops > 0:
 			"http://"+hub+":4200/wd/hub",
 
 			desired_capabilities={
-					"browserName": browser
-			}
+				"browserName": browser,
+				
+			}	
 
-			#desired_capabilities.chrome()
 	)
 	
 
