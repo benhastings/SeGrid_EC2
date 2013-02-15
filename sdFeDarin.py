@@ -187,7 +187,7 @@ while numLoops > 0:
 			idx = int(random.random()*41000)
 			idxPii=idx
 			Pii=str(PII[idxPii]).strip('[\']')
-			testBase=['article1','article2','article2a','article3','article4']
+			testBase=['article1','article2','article2a','article3','article3a','article4']
 			for test in testBase:
 				titl=test
 				try:
