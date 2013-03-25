@@ -190,8 +190,8 @@ while numLoops > 0:
                 #--- Find Login Form & Fill in data ---------------------------
                 try:
                         driver.find_element_by_id("loginPlusScript").click()
-                        driver.find_element_by_id('username').send_keys('Webmetrics')
-                        driver.find_element_by_id('password').send_keys('Scidir_test')
+                        driver.find_element_by_id('username').send_keys(USERNAME)
+                        driver.find_element_by_id('password').send_keys(PASSWORD)
 
 
                         #--- Submit the form based on element ID ----------------
