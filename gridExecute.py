@@ -3,7 +3,7 @@ import sys
 
 chrome=int(sys.argv[1])
 ff=int(sys.argv[2])
-baseURL=sys.argv[3]
+script=sys.argv[3]
 iterations=sys.argv[4]
 hub=sys.argv[5]
 
@@ -17,7 +17,7 @@ while ff > 0:
 
 while chrome > 0:
 #       processes.append(Popen('python sdTest.py '+iterations+' '+baseURL+' chrome http://'+hub+'/wd/hub', shell=True))
-        processes.append(Popen('python sdTest.py '+iterations+' '+baseURL+' chrome '+hub, shell=True))
+        processes.append(Popen('python '+script+' '+iterations+' chrome '+hub, shell=True, close_fds=True))
         chrome=chrome-1
         print chrome
 
