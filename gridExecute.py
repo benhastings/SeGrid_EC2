@@ -16,8 +16,8 @@ while ff > 0:
         print ff
 
 while chrome > 0:
-#       processes.append(Popen('python sdTest.py '+iterations+' '+baseURL+' chrome http://'+hub+'/wd/hub', shell=True))
-        processes.append(Popen('python '+script+' '+iterations+' chrome '+hub, shell=False, close_fds=True))
+        processes.append(Popen(['python',script,iterations,'chrome',hub], shell=False, close_fds=True))
+        #processes.append(Popen('python '+script+' '+iterations+' chrome '+hub, shell=True, close_fds=True))
         chrome=chrome-1
         print chrome
 
