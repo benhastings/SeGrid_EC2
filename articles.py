@@ -182,9 +182,9 @@ while numLoops > 0:
 		baseURL = 'cdc311-www.sciencedirect.com'
 	if (baseIDX%2==1):
 		baseURL = 'cdc314-www.sciencedirect.com'
-	print(baseURL)
+	
 	baseURL = 'cdc311-www.sciencedirect.com'
-			
+	print(baseURL)		
         #-------------------------------------------------
         #       Load Home Page & Authenticate x% of iterations
         #-------------------------------------------------
