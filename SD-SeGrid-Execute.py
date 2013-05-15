@@ -21,7 +21,7 @@ PHOST=resp.read()
 #   - rename whatever test you want to run to the 'sdtest.py' value
 # Otherwise, exit and wait a while
 if 'type=WebDriver' in html:
-	Popen('python gridExecute.py 10 0 sdtest.py 4000000 '+PHOST+'&',shell=True)
+	Popen('python gridExecute.py 5 0 sdtest.py 4000000 '+PHOST+'&',shell=True)
 elif 'requests waiting for a slot to be free' in html:
 	exit
 else:
