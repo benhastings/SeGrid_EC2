@@ -250,7 +250,7 @@ while numLoops > 0:
                         dtitl=driver.title[:50]
                         #print(dtitl[:50])
                 except:
-                        egress(numLoops,idx)
+                        egress()
                 
 	
                 if artLoop > 0:
