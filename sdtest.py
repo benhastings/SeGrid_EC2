@@ -74,10 +74,12 @@ def getPage(resource):
                         time.sleep(60)
                         pass
                 else:
+                        """
                         if 'SD Content Delivery' in titl:
                                 metricsCollect(titl,Pii)
                         else:
                                 metricsCollect(titl,'NA')
+                        """
                         time.sleep(.25)
         except urllib2.URLError:
                 print 'URLError'
@@ -184,7 +186,7 @@ while numLoops > 0:
 	if (baseIDX%2==1):
 		baseURL = 'cdc323-www.sciencedirect.com'
 
-	print(baseURL)		
+	#print(baseURL)		
         #-------------------------------------------------
         #       Load Home Page & Authenticate x% of iterations
         #-------------------------------------------------
