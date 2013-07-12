@@ -238,7 +238,7 @@ while numLoops > loop:
 
         #print ('artLoop: '+str(artLoop))
 
-		idx = int(random.random()*250000)
+		idx = int(random.random()*499000)
         while artLoop > 0:
                 #--- Define Random Value ---------------
                 #idx = int(random.random()*250000)
