@@ -158,8 +158,8 @@ def metricsCollect(dtitl,ID):
 
 #--- Define static Article Value for looping
 idx=0
-
-while numLoops > 0:
+loop=1
+while numLoops > loop:
         print('iteration: '+str(numLoops)+' browser:'+browser)
         """
         Define capabilities of remote webdriver
@@ -181,17 +181,21 @@ while numLoops > 0:
         #       Define baseURL for following transactions
         #-------------------------------------------------
 	baseIDX=int(random.random()*300)
-	if (baseIDX%2==0):
+	if (baseIDX%4==0):
 		baseURL = 'cdc311-www.sciencedirect.com'
-	if (baseIDX%2==1):
+	if (baseIDX%4==1):
 		baseURL = 'cdc323-www.sciencedirect.com'
-	baseURL = 'cdc323-www.sciencedirect.com'
+	if (baseIDX%4==2):
+		baseURL = 'cdc318-www.sciencedirect.com'
+	if (baseIDX%4==3):
+		baseURL = 'cdc314-www.sciencedirect.com'
+	#baseURL = 'cdc323-www.sciencedirect.com'
 	#print(baseURL)		
         #-------------------------------------------------
         #       Load Home Page & Authenticate x% of iterations
         #-------------------------------------------------
         login = int(random.random()*100)
-        if (login%100 < 75):
+        if (login%100 < 50):
                 #--- Request Home Page ----------------------------------------
                 titl='Home Page'
                 getPage(driver.get("http://"+baseURL))
@@ -259,6 +263,43 @@ while numLoops > 0:
                         artLoop = artLoop-1
                         idx = idx+1
 
-        numLoops = numLoops-1
+
+	try:
+                if ('ScienceDirect.com' in driver.title):
+                        #if (login%6 == 0):
+                        if (login%6 < 3):
+                                titl='Search'
+                                SrIdx = int(random.random()*100)%100
+
+                                try:
+                                        inputElement = driver.find_element_by_id("quickSearch")
+                                        #print('search element found')
+                                        inputElement.send_keys(SRCH[SrIdx])
+                                        #print('search text entered')
+                                        time.sleep(.5)
+                                        #--- Submit Form --------
+                                        getPage(driver.find_element_by_xpath("//button[contains(@title,'Submit quick search')]").click())
+                                except:
+                                        print ('Search form not found '+baseURL)
+                                        pass
+                        #if (login%6 > 4):
+                        if (login%6 > 3):
+                                #--- Load Browse List - "Category List" -------------
+                                titl='Category List'
+                                getPage(driver.get("http://"+baseURL+"/science/browse"))
+
+                                #--- Load Journal Home Pages - "Category Home" ------
+                                jrnLoop = 2
+                                while jrnLoop > 0:
+                                        titl='Category Home'
+                                        idx=idx+jrnLoop
+                                        jIdx=idx%2500
+                                        getPage(driver.get("http://"+baseURL+"/science/journal/"+str(JRNL[jIdx]).strip('[\']')))
+                                        jrnLoop=jrnLoop-1
+        except:
+                pass
+
+
+        loop = loop+1
         idx=idx+1
         egress()
