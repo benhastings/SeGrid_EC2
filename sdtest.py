@@ -160,7 +160,7 @@ def metricsCollect(dtitl,ID):
 idx=0
 loop=1
 while numLoops > loop:
-        print('iteration: '+str(numLoops)+' browser:'+browser)
+        print('iteration: '+str(loop)+' browser:'+browser)
         """
         Define capabilities of remote webdriver
                 Specifically: assign browser type
