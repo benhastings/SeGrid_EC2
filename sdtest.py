@@ -74,9 +74,10 @@ def getPage(resource):
                         time.sleep(60)
                         pass
                 else:
-                        """
+                       
                         if 'SD Content Delivery' in titl:
                                 metricsCollect(titl,Pii)
+                        """
                         else:
                                 metricsCollect(titl,'NA')
                         """
