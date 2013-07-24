@@ -260,46 +260,45 @@ while numLoops > loop:
                         egress()
                 
 	
+
+		try:
+	                if ('ScienceDirect.com' in driver.title):
+	                        #if (login%6 == 0):
+	                        if (login%6 < 2):
+	                                titl='Search'
+	                                SrIdx = int(random.random()*100)%100
+	
+	                                try:
+	                                        inputElement = driver.find_element_by_id("quickSearch")
+	                                        #print('search element found')
+	                                        inputElement.send_keys(SRCH[SrIdx])
+	                                        #print('search text entered')
+	                                        time.sleep(.5)
+	                                        #--- Submit Form --------
+	                                        getPage(driver.find_element_by_xpath("//button[contains(@title,'Submit quick search')]").click())
+	                                except:
+	                                        print ('Search form not found '+baseURL)
+	                                        pass
+	                        #if (login%6 > 4):
+	                        if (login%6 > 3):
+	                                #--- Load Browse List - "Category List" -------------
+	                                titl='Category List'
+	                                getPage(driver.get("http://"+baseURL+"/science/browse"))
+	
+	                                #--- Load Journal Home Pages - "Category Home" ------
+	                                jrnLoop = 2
+	                                while jrnLoop > 0:
+	                                        titl='Category Home'
+	                                        idx=idx+jrnLoop
+	                                        jIdx=idx%2500
+	                                        getPage(driver.get("http://"+baseURL+"/science/journal/"+str(JRNL[jIdx]).strip('[\']')))
+	                                        jrnLoop=jrnLoop-1
+	        except:
+	                pass
+
                 if artLoop > 0:
                         artLoop = artLoop-1
                         idx = idx+1
-
-
-	try:
-                if ('ScienceDirect.com' in driver.title):
-                        #if (login%6 == 0):
-                        if (login%6 < 3):
-                                titl='Search'
-                                SrIdx = int(random.random()*100)%100
-
-                                try:
-                                        inputElement = driver.find_element_by_id("quickSearch")
-                                        #print('search element found')
-                                        inputElement.send_keys(SRCH[SrIdx])
-                                        #print('search text entered')
-                                        time.sleep(.5)
-                                        #--- Submit Form --------
-                                        getPage(driver.find_element_by_xpath("//button[contains(@title,'Submit quick search')]").click())
-                                except:
-                                        print ('Search form not found '+baseURL)
-                                        pass
-                        #if (login%6 > 4):
-                        if (login%6 > 3):
-                                #--- Load Browse List - "Category List" -------------
-                                titl='Category List'
-                                getPage(driver.get("http://"+baseURL+"/science/browse"))
-
-                                #--- Load Journal Home Pages - "Category Home" ------
-                                jrnLoop = 2
-                                while jrnLoop > 0:
-                                        titl='Category Home'
-                                        idx=idx+jrnLoop
-                                        jIdx=idx%2500
-                                        getPage(driver.get("http://"+baseURL+"/science/journal/"+str(JRNL[jIdx]).strip('[\']')))
-                                        jrnLoop=jrnLoop-1
-        except:
-                pass
-
 
         loop = loop+1
         idx=idx+1
