@@ -235,7 +235,7 @@ while numLoops > loop:
         if (login%3==0):
                 artLoop=8
         else:
-                artLoop=2
+                artLoop=4
 
         #print ('artLoop: '+str(artLoop))
 
@@ -259,15 +259,17 @@ while numLoops > loop:
                 except:
                         egress()
                 
+                if artLoop > 0:
+                        artLoop = artLoop-1
+                        idx = idx+1
 	
 
 		try:
-	                if ('ScienceDirect.com' in driver.title):
-	                        #if (login%6 == 0):
-	                        if (login%6 < 2):
-	                                titl='Search'
+	                #if (login%6 == 0):
+	                if (artLoop%4 < 2):
+	                               titl='Search'
 	                                SrIdx = int(random.random()*100)%100
-	
+					print('trying search')	
 	                                try:
 	                                        inputElement = driver.find_element_by_id("quickSearch")
 	                                        #print('search element found')
@@ -280,9 +282,10 @@ while numLoops > loop:
 	                                        print ('Search form not found '+baseURL)
 	                                        pass
 	                        #if (login%6 > 4):
-	                        if (login%6 > 3):
+	                        if (artLoop%4 > 2):
 	                                #--- Load Browse List - "Category List" -------------
 	                                titl='Category List'
+					print('trying browse')	
 	                                getPage(driver.get("http://"+baseURL+"/science/browse"))
 	
 	                                #--- Load Journal Home Pages - "Category Home" ------
@@ -291,14 +294,11 @@ while numLoops > loop:
 	                                        titl='Category Home'
 	                                        idx=idx+jrnLoop
 	                                        jIdx=idx%2500
+						print('trying journal')	
 	                                        getPage(driver.get("http://"+baseURL+"/science/journal/"+str(JRNL[jIdx]).strip('[\']')))
 	                                        jrnLoop=jrnLoop-1
 	        except:
 	                pass
-
-                if artLoop > 0:
-                        artLoop = artLoop-1
-                        idx = idx+1
 
         loop = loop+1
         idx=idx+1
