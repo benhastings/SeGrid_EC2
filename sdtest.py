@@ -266,8 +266,8 @@ while numLoops > loop:
 
 		try:
                 	#if (login%6 == 0):
-                	if (artLoop%4 < 2):
-                               titl='Search'
+                	if (artLoop%3 < 1):
+                                titl='Search'
                                 SrIdx = int(random.random()*100)%100
 				print('trying search')	
                                 try:
@@ -282,7 +282,7 @@ while numLoops > loop:
                                         print ('Search form not found '+baseURL)
                                         pass
                         #if (login%6 > 4):
-                        if (artLoop%4 > 2):
+                        if (artLoop%3 > 1):
                                 #--- Load Browse List - "Category List" -------------
                                 titl='Category List'
 				print('trying browse')	
