@@ -265,38 +265,38 @@ while numLoops > loop:
 	
 
 		try:
-	                #if (login%6 == 0):
-	                if (artLoop%4 < 2):
-	                               titl='Search'
-	                                SrIdx = int(random.random()*100)%100
-					print('trying search')	
-	                                try:
-	                                        inputElement = driver.find_element_by_id("quickSearch")
-	                                        #print('search element found')
-	                                        inputElement.send_keys(SRCH[SrIdx])
-	                                        #print('search text entered')
-	                                        time.sleep(.5)
-	                                        #--- Submit Form --------
-	                                        getPage(driver.find_element_by_xpath("//button[contains(@title,'Submit quick search')]").click())
-	                                except:
-	                                        print ('Search form not found '+baseURL)
-	                                        pass
-	                        #if (login%6 > 4):
-	                        if (artLoop%4 > 2):
-	                                #--- Load Browse List - "Category List" -------------
-	                                titl='Category List'
-					print('trying browse')	
-	                                getPage(driver.get("http://"+baseURL+"/science/browse"))
-	
-	                                #--- Load Journal Home Pages - "Category Home" ------
-	                                jrnLoop = 2
-	                                while jrnLoop > 0:
-	                                        titl='Category Home'
-	                                        idx=idx+jrnLoop
-	                                        jIdx=idx%2500
-						print('trying journal')	
-	                                        getPage(driver.get("http://"+baseURL+"/science/journal/"+str(JRNL[jIdx]).strip('[\']')))
-	                                        jrnLoop=jrnLoop-1
+                	#if (login%6 == 0):
+                	if (artLoop%4 < 2):
+                               titl='Search'
+                                SrIdx = int(random.random()*100)%100
+				print('trying search')	
+                                try:
+                                        inputElement = driver.find_element_by_id("quickSearch")
+                                        #print('search element found')
+                                        inputElement.send_keys(SRCH[SrIdx])
+                                        #print('search text entered')
+                                        time.sleep(.5)
+                                        #--- Submit Form --------
+                                        getPage(driver.find_element_by_xpath("//button[contains(@title,'Submit quick search')]").click())
+                                except:
+                                        print ('Search form not found '+baseURL)
+                                        pass
+                        #if (login%6 > 4):
+                        if (artLoop%4 > 2):
+                                #--- Load Browse List - "Category List" -------------
+                                titl='Category List'
+				print('trying browse')	
+                                getPage(driver.get("http://"+baseURL+"/science/browse"))
+
+                                #--- Load Journal Home Pages - "Category Home" ------
+                                jrnLoop = 2
+                                while jrnLoop > 0:
+                                        titl='Category Home'
+                                        idx=idx+jrnLoop
+                                        jIdx=idx%2500
+					print('trying journal')	
+                                        getPage(driver.get("http://"+baseURL+"/science/journal/"+str(JRNL[jIdx]).strip('[\']')))
+                                        jrnLoop=jrnLoop-1
 	        except:
 	                pass
 
