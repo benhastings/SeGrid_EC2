@@ -77,10 +77,10 @@ def getPage(resource):
                        
                         if 'SD Content Delivery' in titl:
                                 metricsCollect(titl,Pii)
-                        """
+                        
                         else:
                                 metricsCollect(titl,'NA')
-                        """
+                        
                         time.sleep(.25)
         except urllib2.URLError:
                 print 'URLError'
@@ -123,7 +123,7 @@ def metricsCollect(dtitl,ID):
                 # Datetime for Timestamp
                 dt = datetime.datetime.now()
                 dTm = str(dt.strftime("%Y/%m/%d %H:%M:%S%Z"))
-                """
+                
                 if 'SD Content Delivery' in dtitl:
                 #       if sections > 0:
                 #               print(browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+PII+'\t'+sections)
@@ -131,7 +131,7 @@ def metricsCollect(dtitl,ID):
                         print(browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+ID)
                 else:
                         print(browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+dtitl)
-                """
+                
         except:
                 if 'Pii' in globals():
                         print('Unable to print perfTiming details, PII:'+Pii)
