@@ -9,32 +9,35 @@ import random
 import sys
 import urllib2
 
-#--- Browser definition for Grid usage ----------
 
-browser = sys.argv[3]
-
+#------------------------------------------------------------
 #--- Get Interactive Input for number of loops to execute ---
 numLoops = int(sys.argv[1])
 
-baseURL = sys.argv[2]
-hub = sys.argv[4]
+#--- Browser definition for Grid usage ----------
+browser = sys.argv[2]
+
+#--- SeGrid Hub designation --------------------
+hub = sys.argv[3]
+
+
 
 #--- Read List of PIIs -----------------
 PII=[]
-csvRd = csv.reader(open('PIIs_250k.csv','rb'))
+csvRd = csv.reader(open('/opt/SeResources/piis-1m.csv','rb'))
 for j in csvRd:
         PII.append(j)
 
 
 #--- Read List of Journals -----------------
 JRNL=[]
-csvRd = csv.reader(open('Journals.csv','rb'))
+csvRd = csv.reader(open('/opt/SeResources/Journals.csv','rb'))
 for j in csvRd:
         JRNL.append(j)
 
 #--- Read List of Search Terms -----------------
 SRCH=[]
-csvRd = csv.reader(open('SDSrchTerms.csv','rb'))
+csvRd = csv.reader(open('/opt/SeResources/SDSrchTerms.csv','rb'))
 for j in csvRd:
         SRCH.append(j)
 
@@ -71,10 +74,13 @@ def getPage(resource):
                         time.sleep(60)
                         pass
                 else:
+                       
                         if 'SD Content Delivery' in titl:
                                 metricsCollect(titl,Pii)
+                        
                         else:
                                 metricsCollect(titl,'NA')
+                        
                         time.sleep(.25)
         except urllib2.URLError:
                 print 'URLError'
@@ -117,7 +123,7 @@ def metricsCollect(dtitl,ID):
                 # Datetime for Timestamp
                 dt = datetime.datetime.now()
                 dTm = str(dt.strftime("%Y/%m/%d %H:%M:%S%Z"))
-
+                
                 if 'SD Content Delivery' in dtitl:
                 #       if sections > 0:
                 #               print(browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+PII+'\t'+sections)
@@ -125,6 +131,7 @@ def metricsCollect(dtitl,ID):
                         print(browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+ID)
                 else:
                         print(browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+dtitl)
+                
         except:
                 if 'Pii' in globals():
                         print('Unable to print perfTiming details, PII:'+Pii)
@@ -152,9 +159,9 @@ def metricsCollect(dtitl,ID):
 
 #--- Define static Article Value for looping
 idx=0
-
-while numLoops > 0:
-        print('iteration: '+str(numLoops)+' browser:'+browser)
+loop=1
+while numLoops > loop:
+        print('iteration: '+str(loop)+' browser:'+browser)
         """
         Define capabilities of remote webdriver
                 Specifically: assign browser type
@@ -169,10 +176,22 @@ while numLoops > 0:
                 #desired_capabilities.chrome()
         )
 
+        time.sleep(.05)
 
-        time.sleep(.25)
-
-
+  #-------------------------------------------------
+        #       Define baseURL for following transactions
+        #-------------------------------------------------
+	baseIDX=int(random.random()*300)
+	if (baseIDX%4==0):
+		baseURL = 'cdc311-www.sciencedirect.com'
+	if (baseIDX%4==1):
+		baseURL = 'cdc323-www.sciencedirect.com'
+	if (baseIDX%4==2):
+		baseURL = 'cdc318-www.sciencedirect.com'
+	if (baseIDX%4==3):
+		baseURL = 'cdc314-www.sciencedirect.com'
+	#baseURL = 'cdc323-www.sciencedirect.com'
+	#print(baseURL)		
         #-------------------------------------------------
         #       Load Home Page & Authenticate x% of iterations
         #-------------------------------------------------
@@ -185,8 +204,8 @@ while numLoops > 0:
                 #--- Find Login Form & Fill in data ---------------------------
                 try:
                         driver.find_element_by_id("loginPlusScript").click()
-                        driver.find_element_by_id('username').send_keys(USERNAME)
-                        driver.find_element_by_id('password').send_keys(PASSWORD)
+                        driver.find_element_by_id('username').send_keys('Webmetrics')
+                        driver.find_element_by_id('password').send_keys('Scidir_test')
 
 
                         #--- Submit the form based on element ID ----------------
@@ -213,19 +232,17 @@ while numLoops > 0:
         #               View multiple articles in same session 33%
         #-------------------------------------------------
         artLoop = 1
-	
         if (login%3==0):
                 artLoop=8
-        if (login%3==1):
-                artLoop=4
         else:
-                artLoop=2
-	
+                artLoop=4
+
         #print ('artLoop: '+str(artLoop))
 
+		idx = int(random.random()*499000)
         while artLoop > 0:
                 #--- Define Random Value ---------------
-                idx = int(random.random()*250000)
+                #idx = int(random.random()*250000)
                 idxPii=idx
                 Pii=str(PII[idxPii]).strip('[\']')
                 titl = 'SD Content Delivery'
@@ -235,91 +252,40 @@ while numLoops > 0:
                         getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
                 except urllib2.URLError:
                         pass
-                time.sleep(.5)
+                time.sleep(.05)
                 try:
                         dtitl=driver.title[:50]
                         #print(dtitl[:50])
                 except:
-                        egress(numLoops,idx)
-                if 'ScienceDirect.com' in dtitl:
-                        titl='SD Content Delivery'
-                        time.sleep(.5)
-                	if (artLoop%2==1):        
-				try:
-                                	secs=driver.find_elements_by_class_name("svArticle")
-	                                #print 'Sections:'+str(len(secs))
-        	                        if len(secs) > 0 and numLoops%2 > 0:
-                	                        if len(secs) > 2:
-                        	                        #print 'scroll to 1'
-                                	                driver.execute_script("arguments[0].scrollIntoView();",secs[1])
-                                        	        time.sleep(.75)
-	                                        if len(secs) > 10:
-        	                                        #print 'scroll to 9'
-                	                                driver.execute_script("arguments[0].scrollIntoView();",secs[9])
-                        	                        time.sleep(.75)
-                                	        if len(secs) > 30:
-	                                                #print 'scroll to 29'
-        	                                        driver.execute_script("arguments[0].scrollIntoView();",secs[29])
-                	                                time.sleep(.75)
-                        	                if len(secs) > 70:
-                                	                #print 'scroll to 69'
-                                        	        driver.execute_script("arguments[0].scrollIntoView();",secs[69])
-                                                	time.sleep(.75)
-
-
-	                                try:
-        	                                refs = driver.find_element_by_class_name("references")
-                	                        scStart = time.time()
-                        	                #print 'scroll to References'
-                                	        driver.execute_script("arguments[0].scrollIntoView();",refs)
-                                        	try:
-                                                	wait.until(lambda driver: driver.find_elements_by_partial_link_text('Cited By in Scopus ('))
-	                                        except: # end waiting for references to resolve
-        	                                        pass
-                	                except: # end try scrolling to references
-                        	                pass
-	                        except: # end try scrolling
-        	                        pass
-
-
-                elif 'Article Locator' in dtitl:
-                        titl='ALP'
-                        pass
-                else:
-                        titl='Other'
-                        pass
-
-                #secStr=str(len(secs))
-                #metricsCollect(titl,Pii,secStr)
+                        egress()
+                
                 if artLoop > 0:
                         artLoop = artLoop-1
                         idx = idx+1
-        
+	
 
-	try:
-                if ('ScienceDirect.com' in driver.title):
-                        #if (login%6 == 0):
-                        if (login%6 < 3):
-                      		titl='Search'
+		try:
+                	#if (login%6 == 0):
+                	if (artLoop%5 == 0):
+                                titl='Search'
                                 SrIdx = int(random.random()*100)%100
-
+				#print('trying search')	
                                 try:
-                                	inputElement = driver.find_element_by_id("quickSearch")
+                                        inputElement = driver.find_element_by_id("quickSearch")
                                         #print('search element found')
                                         inputElement.send_keys(SRCH[SrIdx])
                                         #print('search text entered')
-                                        time.sleep(.5)
+                                        time.sleep(.05)
                                         #--- Submit Form --------
                                         getPage(driver.find_element_by_xpath("//button[contains(@title,'Submit quick search')]").click())
-                                	time.sleep(1)
-				except:
-                                        print 'Search form not found'
+                                except:
+                                        print ('Search form not found '+baseURL)
                                         pass
-                        
-			#if (login%6 > 4):
-                        if (login%6 > 3):
+                        #if (login%6 > 4):
+                        if (artLoop%5 == 4):
                                 #--- Load Browse List - "Category List" -------------
                                 titl='Category List'
+				#print('trying browse')	
                                 getPage(driver.get("http://"+baseURL+"/science/browse"))
 
                                 #--- Load Journal Home Pages - "Category Home" ------
@@ -328,18 +294,12 @@ while numLoops > 0:
                                         titl='Category Home'
                                         idx=idx+jrnLoop
                                         jIdx=idx%2500
+					#print('trying journal')	
                                         getPage(driver.get("http://"+baseURL+"/science/journal/"+str(JRNL[jIdx]).strip('[\']')))
-                                        time.sleep(1)
-					jrnLoop=jrnLoop-1
-			
-        except:
-                pass
+                                        jrnLoop=jrnLoop-1
+	        except:
+	                pass
 
-
-
-        numLoops = numLoops-1
+        loop = loop+1
         idx=idx+1
         egress()
-
-                                    
-
