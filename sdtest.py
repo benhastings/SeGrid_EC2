@@ -176,7 +176,7 @@ while numLoops > loop:
                 #desired_capabilities.chrome()
         )
 
-        time.sleep(.25)
+        time.sleep(.05)
 
   #-------------------------------------------------
         #       Define baseURL for following transactions
@@ -252,7 +252,7 @@ while numLoops > loop:
                         getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
                 except urllib2.URLError:
                         pass
-                time.sleep(.25)
+                time.sleep(.05)
                 try:
                         dtitl=driver.title[:50]
                         #print(dtitl[:50])
@@ -266,26 +266,26 @@ while numLoops > loop:
 
 		try:
                 	#if (login%6 == 0):
-                	if (artLoop%3 < 1):
+                	if (artLoop%5 == 0):
                                 titl='Search'
                                 SrIdx = int(random.random()*100)%100
-				print('trying search')	
+				#print('trying search')	
                                 try:
                                         inputElement = driver.find_element_by_id("quickSearch")
                                         #print('search element found')
                                         inputElement.send_keys(SRCH[SrIdx])
                                         #print('search text entered')
-                                        time.sleep(.5)
+                                        time.sleep(.05)
                                         #--- Submit Form --------
                                         getPage(driver.find_element_by_xpath("//button[contains(@title,'Submit quick search')]").click())
                                 except:
                                         print ('Search form not found '+baseURL)
                                         pass
                         #if (login%6 > 4):
-                        if (artLoop%3 > 1):
+                        if (artLoop%5 == 4):
                                 #--- Load Browse List - "Category List" -------------
                                 titl='Category List'
-				print('trying browse')	
+				#print('trying browse')	
                                 getPage(driver.get("http://"+baseURL+"/science/browse"))
 
                                 #--- Load Journal Home Pages - "Category Home" ------
@@ -294,7 +294,7 @@ while numLoops > loop:
                                         titl='Category Home'
                                         idx=idx+jrnLoop
                                         jIdx=idx%2500
-					print('trying journal')	
+					#print('trying journal')	
                                         getPage(driver.get("http://"+baseURL+"/science/journal/"+str(JRNL[jIdx]).strip('[\']')))
                                         jrnLoop=jrnLoop-1
 	        except:
