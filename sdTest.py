@@ -24,20 +24,29 @@ hub = sys.argv[3]
 
 #--- Read List of PIIs -----------------
 PII=[]
-csvRd = csv.reader(open('/opt/SeResources/piis-1m.csv','rb'))
+try:
+	csvRd = csv.reader(open('/opt/SeResources/piis-1m.csv','rb'))
+except:
+	csvRd = csv.reader(open('C:/Scripts/piis-1m.csv','rb'))
 for j in csvRd:
         PII.append(j)
 
 
 #--- Read List of Journals -----------------
 JRNL=[]
-csvRd = csv.reader(open('/opt/SeResources/Journals.csv','rb'))
+try:
+	csvRd = csv.reader(open('/opt/SeResources/Journals.csv','rb'))
+except:
+	csvRd = csv.reader(open('C:/Scripts/Journals.csv','rb'))
 for j in csvRd:
         JRNL.append(j)
 
 #--- Read List of Search Terms -----------------
 SRCH=[]
-csvRd = csv.reader(open('/opt/SeResources/SDSrchTerms.csv','rb'))
+try:
+	csvRd = csv.reader(open('/opt/SeResources/SDSrchTerms.csv','rb'))
+except:	
+	csvRd = csv.reader(open('C:/Scripts/SDSrchTerms.csv','rb'))
 for j in csvRd:
         SRCH.append(j)
 
@@ -62,32 +71,33 @@ def egress():
 #               Makes call to collect page timing
 #-------------
 def getPage(resource):
-        try:
-                #driver.get("http://"+baseURL)
-                resource
-                if 'Unable to process' in driver.title:
-                        print 'Error - Unable to process, wait 60 seconds'
-                        time.sleep(60)
-                        pass
-                elif 'Error' in driver.title:
-                        print 'Error, wait 60 seconds'
-                        time.sleep(60)
-                        pass
-                else:
-                       
-                        if 'SD Content Delivery' in titl:
-                                metricsCollect(titl,Pii)
-                        
-                        else:
-                                metricsCollect(titl,'NA')
-                        
-                        time.sleep(.25)
-        except urllib2.URLError:
-                print 'URLError'
-                pass
-        except:
-                print (titl+' fail')
-                pass
+	try:
+		#driver.get("http://"+baseURL)
+		resource
+		if 'Unable to process' in driver.title:
+			print 'Error - Unable to process, wait 60 seconds'
+			time.sleep(60)
+			pass
+		elif 'ScienceDirect Error' in driver.title:
+			print 'SD-00x Error'
+			time.sleep(1)
+			pass
+		elif 'Error' in driver.title:
+			print 'Error, wait 60 seconds'
+			time.sleep(60)
+			pass
+		else:
+			if 'SD Content Delivery' in titl:
+				metricsCollect(titl,Pii)
+			else:
+				metricsCollect(titl,'NA')
+			time.sleep(.05)
+	except urllib2.URLError:
+		print 'URLError'
+		pass
+	except:
+		print (titl+' fail')
+		pass
 
 
 #-------------------------------------------------------
@@ -161,26 +171,19 @@ def metricsCollect(dtitl,ID):
 idx=0
 loop=1
 while numLoops > loop:
-        print('iteration: '+str(loop)+' browser:'+browser)
-        """
-        Define capabilities of remote webdriver
-                Specifically: assign browser type
-        """
-        driver=webdriver.Remote(
-                "http://"+hub+":4200/wd/hub",
+	print('iteration: '+str(loop)+' browser:'+browser)
+	"""
+	Define capabilities of remote webdriver
+			Specifically: assign browser type
+	"""
+	driver=webdriver.Chrome()
+	#driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
 
-                desired_capabilities={
-                        "browserName": browser
-                }
+	time.sleep(.05)
 
-                #desired_capabilities.chrome()
-        )
-
-        time.sleep(.05)
-
-  #-------------------------------------------------
-        #       Define baseURL for following transactions
-        #-------------------------------------------------
+	#-------------------------------------------------
+	#       Define baseURL for following transactions
+	#-------------------------------------------------
 	baseIDX=int(random.random()*300)
 	if (baseIDX%4==0):
 		baseURL = 'cdc311-www.sciencedirect.com'
@@ -192,114 +195,119 @@ while numLoops > loop:
 		baseURL = 'cdc314-www.sciencedirect.com'
 	#baseURL = 'cdc323-www.sciencedirect.com'
 	#print(baseURL)		
-        #-------------------------------------------------
-        #       Load Home Page & Authenticate x% of iterations
-        #-------------------------------------------------
-        login = int(random.random()*100)
-        if (login%100 < 50):
-                #--- Request Home Page ----------------------------------------
-                titl='Home Page'
-                getPage(driver.get("http://"+baseURL))
+	#-------------------------------------------------
+	#       Load Home Page & Authenticate x% of iterations
+	#-------------------------------------------------
+	login = int(random.random()*100)
+	if (login%100 < 50):
+		#--- Request Home Page ----------------------------------------
+		titl='Home Page'
+		getPage(driver.get("http://"+baseURL))
 
-                #--- Find Login Form & Fill in data ---------------------------
-                try:
-                        driver.find_element_by_id("loginPlusScript").click()
-                        driver.find_element_by_id('username').send_keys('Webmetrics')
-                        driver.find_element_by_id('password').send_keys('Scidir_test')
-
-
-                        #--- Submit the form based on element ID ----------------
-                        titl='U/P Auth to Home Page'
-                        getPage(driver.find_element_by_name("arrow").click())
-
-                        #--- If choose Org screen displayed, select appropriate value
-                        if 'Choose Organization' in driver.title:
-                                titl='Choose Org to Home Page'
-                                try:
-                                        driver.find_element_by_id('1').click()
-                                        driver.find_element_by_class_name('button').click()
-                                        #metricsCollect(titl)
-                                except:
-                                        pass
-                except:
-                        pass
+		#--- Find Login Form & Fill in data ---------------------------
+		try:
+			driver.find_element_by_id("loginPlusScript").click()
+			driver.find_element_by_id('username').send_keys('Webmetrics')
+			driver.find_element_by_id('password').send_keys('Scidir_test')
 
 
+			#--- Submit the form based on element ID ----------------
+			titl='U/P Auth to Home Page'
+			getPage(driver.find_element_by_name("arrow").click())
+
+			#--- If choose Org screen displayed, select appropriate value
+			if 'Choose Organization' in driver.title:
+				titl='Choose Org to Home Page'
+				try:
+					driver.find_element_by_id('1').click()
+					driver.find_element_by_class_name('button').click()
+					#metricsCollect(titl)
+				except:
+					pass
+		except:
+				pass
 
 
-        #-------------------------------------------------
-        #       View Article(s) with scrolling where possible
-        #               View multiple articles in same session 33%
-        #-------------------------------------------------
-        artLoop = 1
-        if (login%3==0):
-                artLoop=8
-        else:
-                artLoop=4
+	#-------------------------------------------------
+	#      Add looping structure to minimize browser churn
+	#-------------------------------------------------
+	browserLoop=20				
+	while(browserLoop > 0):
+		#-------------------------------------------------
+		#       View Article(s) with scrolling where possible
+		#               View multiple articles in same session 33%
+		#-------------------------------------------------
+		artLoop = 1
+		if (login%3==0):
+				artLoop=8
+		else:
+				artLoop=4
 
-        #print ('artLoop: '+str(artLoop))
+		#print ('artLoop: '+str(artLoop))
 
 		idx = int(random.random()*499000)
-        while artLoop > 0:
-                #--- Define Random Value ---------------
-                #idx = int(random.random()*250000)
-                idxPii=idx
-                Pii=str(PII[idxPii]).strip('[\']')
-                titl = 'SD Content Delivery'
-                #sStart = time.time()
-                try:
-                        #print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
-                        getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
-                except urllib2.URLError:
-                        pass
-                time.sleep(.05)
-                try:
-                        dtitl=driver.title[:50]
-                        #print(dtitl[:50])
-                except:
-                        egress()
-                
-                if artLoop > 0:
-                        artLoop = artLoop-1
-                        idx = idx+1
-	
+		while artLoop > 0:
+			#--- Define Random Value ---------------
+			#idx = int(random.random()*250000)
+			idxPii=idx
+			Pii=str(PII[idxPii]).strip('[\']')
+			titl = 'SD Content Delivery'
+			#sStart = time.time()
+			try:
+				#print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
+				getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
+			except urllib2.URLError:
+				pass
+			time.sleep(.05)
+			try:
+				dtitl=driver.title[:50]
+				#print(dtitl[:50])
+			except:
+				egress()
 
-		try:
-                	#if (login%6 == 0):
-                	if (artLoop%5 == 0):
-                                titl='Search'
-                                SrIdx = int(random.random()*100)%100
-				#print('trying search')	
-                                try:
-                                        inputElement = driver.find_element_by_id("quickSearch")
-                                        #print('search element found')
-                                        inputElement.send_keys(SRCH[SrIdx])
-                                        #print('search text entered')
-                                        time.sleep(.05)
-                                        #--- Submit Form --------
-                                        getPage(driver.find_element_by_xpath("//button[contains(@title,'Submit quick search')]").click())
-                                except:
-                                        print ('Search form not found '+baseURL)
-                                        pass
-                        #if (login%6 > 4):
-                        if (artLoop%5 == 4):
-                                #--- Load Browse List - "Category List" -------------
-                                titl='Category List'
-				#print('trying browse')	
-                                getPage(driver.get("http://"+baseURL+"/science/browse"))
+			if artLoop > 0:
+				artLoop = artLoop-1
+				idx = idx+1
 
-                                #--- Load Journal Home Pages - "Category Home" ------
-                                jrnLoop = 2
-                                while jrnLoop > 0:
-                                        titl='Category Home'
-                                        idx=idx+jrnLoop
-                                        jIdx=idx%2500
-					#print('trying journal')	
-                                        getPage(driver.get("http://"+baseURL+"/science/journal/"+str(JRNL[jIdx]).strip('[\']')))
-                                        jrnLoop=jrnLoop-1
-	        except:
-	                pass
 
-        loop = loop+1
-        idx=idx+1
-        egress()
+			try:
+				#if (login%6 == 0):
+				if (artLoop%5 == 0):
+					titl='Search'
+					SrIdx = int(random.random()*100)%100
+					#print('trying search')	
+					try:
+						inputElement = driver.find_element_by_id("quickSearch")
+						#print('search element found')
+						inputElement.send_keys(SRCH[SrIdx])
+						#print('search text entered')
+						time.sleep(.05)
+						#--- Submit Form --------
+						getPage(driver.find_element_by_xpath("//button[contains(@title,'Submit quick search')]").click())
+					except:
+						print ('Search form not found '+baseURL)
+						pass
+				#if (login%6 > 4):
+				if (artLoop%5 == 4):
+					#--- Load Browse List - "Category List" -------------
+					titl='Category List'
+					#print('trying browse')	
+					getPage(driver.get("http://"+baseURL+"/science/browse"))
+
+					#--- Load Journal Home Pages - "Category Home" ------
+					jrnLoop = 2
+					while jrnLoop > 0:
+						titl='Category Home'
+						idx=idx+jrnLoop
+						jIdx=idx%2500
+						#print('trying journal')	
+						getPage(driver.get("http://"+baseURL+"/science/journal/"+str(JRNL[jIdx]).strip('[\']')))
+						jrnLoop=jrnLoop-1
+			except:
+				pass
+				
+		browserLoop=browserLoop-1
+		print(browserLoop)
+	loop = loop+1
+	idx=idx+1
+	egress()
