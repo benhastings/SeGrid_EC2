@@ -244,12 +244,16 @@ while numLoops > loop:
 				artLoop=4
 
 		#print ('artLoop: '+str(artLoop))
-
-		idx = int(random.random()*499000)
+		
+		#Comment out for sequential evaluation of articles
+		#idx = int(random.random()*499000)
+		
+		
 		while artLoop > 0:
 			#--- Define Random Value ---------------
 			#idx = int(random.random()*250000)
 			idxPii=idx
+			#print('articleIDX:'+str(idx))
 			Pii=str(PII[idxPii]).strip('[\']')
 			titl = 'SD Content Delivery'
 			#sStart = time.time()
