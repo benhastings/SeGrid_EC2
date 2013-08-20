@@ -20,13 +20,18 @@ browser = sys.argv[2]
 #--- SeGrid Hub designation --------------------
 hub = sys.argv[3]
 
-baseURL='neuro-lt.atsonaws.com/loadtest'
+baseURL='hothouse.atsonaws.com/loadTest/form'
 
 #--- Read List of Search Terms -----------------
 SRCH=[]
-csvRd = csv.reader(open('/opt/SeResources/SDSrchTerms.csv','rb'))
+#csvRd = csv.reader(open('/opt/SeResources/SDSrchTerms.csv','rb'))
 #csvRd = csv.reader(open('C:/Scripts/SDSrchTerms.csv','rb'))
+try:
+        text_file = open("/home/ubuntu/labs_queries.txt", "r")
+except:
+        text_file = open("C:/Scripts/labs_queries.txt", "r")
 
+csvRd = text_file.readlines()
 for j in csvRd:
         SRCH.append(j)
 
@@ -51,19 +56,20 @@ def egress():
 #               Makes call to collect page timing
 #-------------
 def getPage(resource):
-  try:
+	try:
 		#driver.get("http://"+baseURL)
 		resource
-		if 'Unable to process' in driver.title:
-			print 'Error - Unable to process, wait 60 seconds'
-			time.sleep(60)
-			pass
+		time.sleep(5)
+		if 'Load Test Search Results' in driver.title:
+			metricsCollect(titl,'NA')
+			time.sleep(5)
 		elif 'Error' in driver.title:
-			print 'Error, wait 60 seconds'
-			time.sleep(60)
+			print 'Error, redirect to search Form'
+			driver.get("http://sdfe:Els3vier@"+baseURL)
+			time.sleep(1)
 			pass
 		else:
-			metricsCollect(titl,'NA')
+			#metricsCollect(titl,'NA')
 			time.sleep(.25)
 	except urllib2.URLError:
 		print 'URLError'
@@ -143,52 +149,70 @@ def metricsCollect(dtitl,ID):
 idx=0
 
 while numLoops > 0:
-	idx=int(random.random()*44900)
-	srIDX = idx%44900
+	idx=int(random.random()*650001)
+	srIDX = idx%650000
 	
 	print('iteration: '+str(numLoops)+' browser:'+browser)
 	"""
 	Define capabilities of remote webdriver
 			Specifically: assign browser type
 	
-	driver=webdriver.Chrome()
+	# Standalone Usage
 	"""
-	driver=webdriver.Remote(
-			"http://"+hub+":4200/wd/hub",
-
-			desired_capabilities={
-					"browserName": browser
-			}
-
-			#desired_capabilities.chrome()
-	)
+	#driver=webdriver.Chrome()
 	
-	time.sleep(.25)
+	# Webdriver Usage with SeGrid
+	driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
+	
+	time.sleep(.05)
 	
 	#-------------------------------------------------
-	#       Define baseURL for following transactions
+	#       Find Search form then submit search
 	#-------------------------------------------------
-	
-	titl='Search Form'
-	getPage(driver.get("http://sdfe:Els3vier@"+baseURL))
-
 	try:
+		titl='Search Form'
+		getPage(driver.get("http://sdfe:Els3vier@"+baseURL))
+		time.sleep(.05)
+		assert "Load Test Search Form" in driver.title
+		
 		try:
-			print('finding form')
-			inputElement = driver.find_element_by_id("quickSearch")
-			print('search element found')
+			sr = 10
+			while (sr > 0):
+				srIDX = idx%650000
+				#print('idx:'+str(idx))#+' srch:'+SRCH[srIDX])
+				try:
+					#print('find box by id')
+					srchBox = driver.find_element_by_id("quickSearch")
+					#print('found by id')
+				except:
+					#print('find box by xpath')
+					srchBox = driver.find_element_by_xpath("//input[contains(@name,'quickSearch')]")
+					#print('found by xpath')
+				finally:
+					pass
+				
+				#print('enter search terms')
+				srchBox.send_keys(SRCH[srIDX])
+				time.sleep(.05)
+				#--- Submit Form --------
+				titl='Search'
+				#getPage(driver.find_element_by_xpath("//input[contains(@value,'Submit')]").click())
+				#print('click submit button')
+				#driver.find_element_by_xpath("//input[contains(@value,'Submit')]").click()
+				#time.sleep(10)
+				#metricsCollect(titl,'NA')
+				
+				
+				
+				idx=idx+1								
+				sr=sr-1
+			
 		except:
-			print('search element NOT found')
-		time.sleep(2.5)
-		inputElement.send_keys(SRCH[srIDX])
-		print('search text entered')
-		time.sleep(2.5)
-		#--- Submit Form --------
-		titl='Search'
-		getPage(driver.find_element_by_xpath("//input[contains(@title,'Submit quick search')]").click())
+			print 'Search failed'
+			pass
+
 	except:
-		print 'Search form not found'
-		pass
+		'Search form not found'
 
 
 	numLoops = numLoops-1
