@@ -176,8 +176,8 @@ while numLoops > loop:
 	Define capabilities of remote webdriver
 			Specifically: assign browser type
 	"""
-	driver=webdriver.Chrome()
-	#driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
+	#driver=webdriver.Chrome()
+	driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
 
 	time.sleep(.05)
 
@@ -244,12 +244,16 @@ while numLoops > loop:
 				artLoop=4
 
 		#print ('artLoop: '+str(artLoop))
-
-		idx = int(random.random()*499000)
+		
+		#Comment out for sequential evaluation of articles
+		#idx = int(random.random()*499000)
+		
+		
 		while artLoop > 0:
 			#--- Define Random Value ---------------
 			#idx = int(random.random()*250000)
 			idxPii=idx
+			#print('articleIDX:'+str(idx))
 			Pii=str(PII[idxPii]).strip('[\']')
 			titl = 'SD Content Delivery'
 			#sStart = time.time()
