@@ -88,9 +88,11 @@ def getPage(resource):
 			pass
 		else:
 			if 'SD Content Delivery' in titl:
-				metricsCollect(titl,Pii)
+				#metricsCollect(titl,Pii)
+				pass
 			else:
-				metricsCollect(titl,'NA')
+				#metricsCollect(titl,'NA')
+				pass
 			time.sleep(.05)
 	except urllib2.URLError:
 		print 'URLError'
@@ -171,7 +173,7 @@ def metricsCollect(dtitl,ID):
 idx=0
 loop=1
 while numLoops > loop:
-	print('iteration: '+str(loop)+' browser:'+browser)
+	#print('iteration: '+str(loop)+' browser:'+browser)
 	"""
 	Define capabilities of remote webdriver
 			Specifically: assign browser type
@@ -311,7 +313,7 @@ while numLoops > loop:
 				pass
 				
 		browserLoop=browserLoop-1
-		print(browserLoop)
+		#print(browserLoop)
 	loop = loop+1
 	idx=idx+1
 	egress()
