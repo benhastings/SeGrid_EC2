@@ -164,60 +164,60 @@ while numLoops > 0:
 	# Webdriver Usage with SeGrid
 	try:	
 		driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
+	
+		time.sleep(.01)
+	
+		#-------------------------------------------------
+		#       Find Search form then submit search
+		#-------------------------------------------------
+		try:
+			titl='Search Form'
+			getPage(driver.get("http://sdfe:Els3vier@"+baseURL))
+			time.sleep(.01)
+			assert "Load Test Search Form" in driver.title
+	
+			try:
+				sr = 50
+				while (sr > 0):
+					srIDX = idx%349999
+					print('idx:'+str(idx))#+' srch:'+SRCH[srIDX])
+					try:
+						#print('find box by id')
+						srchBox = driver.find_element_by_id("quickSearch")
+						#print('found by id')
+					except:
+						#print('find box by xpath')
+						srchBox = driver.find_element_by_xpath("//input[contains(@name,'quickSearch')]")
+						#print('found by xpath')
+					finally:
+						pass
+	
+					#print('enter search terms')
+					titl='Search'
+					getPage(srchBox.send_keys(SRCH[srIDX]))
+					time.sleep(.01)
+					#--- Submit Form --------
+					#titl='Search'
+					#getPage(driver.find_element_by_xpath("//input[contains(@value,'Submit')]").click())
+					#print('click submit button')
+					#driver.find_element_by_xpath("//input[contains(@value,'Submit')]").click()
+					#time.sleep(10)
+					#metricsCollect(titl,'NA')
+	
+	
+	
+					idx=idx+1								
+					sr=sr-1
+	
+			except:
+				print 'Search failed'
+				pass
+	
+		except:
+			'Search form not found'
+	#except if browser doesn't open
 	except:
 		pass
-	time.sleep(.01)
-
-	#-------------------------------------------------
-	#       Find Search form then submit search
-	#-------------------------------------------------
-	try:
-		titl='Search Form'
-		getPage(driver.get("http://sdfe:Els3vier@"+baseURL))
-		time.sleep(.01)
-		assert "Load Test Search Form" in driver.title
-
-		try:
-			sr = 50
-			while (sr > 0):
-				srIDX = idx%349999
-				print('idx:'+str(idx))#+' srch:'+SRCH[srIDX])
-				try:
-					#print('find box by id')
-					srchBox = driver.find_element_by_id("quickSearch")
-					#print('found by id')
-				except:
-					#print('find box by xpath')
-					srchBox = driver.find_element_by_xpath("//input[contains(@name,'quickSearch')]")
-					#print('found by xpath')
-				finally:
-					pass
-
-				#print('enter search terms')
-				titl='Search'
-				getPage(srchBox.send_keys(SRCH[srIDX]))
-				time.sleep(.01)
-				#--- Submit Form --------
-				#titl='Search'
-				#getPage(driver.find_element_by_xpath("//input[contains(@value,'Submit')]").click())
-				#print('click submit button')
-				#driver.find_element_by_xpath("//input[contains(@value,'Submit')]").click()
-				#time.sleep(10)
-				#metricsCollect(titl,'NA')
-
-
-
-				idx=idx+1								
-				sr=sr-1
-
-		except:
-			print 'Search failed'
-			pass
-
-	except:
-		'Search form not found'
-
-
 	numLoops = numLoops-1
 	idx=idx+1
 	egress()
