@@ -220,4 +220,5 @@ while numLoops > 0:
 		egress()
 	#except if browser doesn't open
 	except:
+		time.sleep(5)
 		pass
