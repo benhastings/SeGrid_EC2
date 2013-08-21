@@ -93,7 +93,7 @@ def getPage(resource):
 			else:
 				#metricsCollect(titl,'NA')
 				pass
-			time.sleep(.05)
+			time.sleep(.01)
 	except urllib2.URLError:
 		print 'URLError'
 		pass
@@ -182,7 +182,7 @@ while numLoops > loop:
 	try:
 		driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
 	
-		time.sleep(.05)
+		time.sleep(.01)
 	
 		#-------------------------------------------------
 		#       Define baseURL for following transactions
@@ -265,7 +265,7 @@ while numLoops > loop:
 					getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
 				except urllib2.URLError:
 					pass
-				time.sleep(.05)
+				time.sleep(.01)
 				try:
 					dtitl=driver.title[:50]
 					#print(dtitl[:50])
@@ -288,7 +288,7 @@ while numLoops > loop:
 							#print('search element found')
 							inputElement.send_keys(SRCH[SrIdx])
 							#print('search text entered')
-							time.sleep(.05)
+							time.sleep(.01)
 							#--- Submit Form --------
 							getPage(driver.find_element_by_xpath("//button[contains(@title,'Submit quick search')]").click())
 						except:
