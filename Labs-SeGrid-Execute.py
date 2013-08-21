@@ -24,7 +24,7 @@ def freeCheck():
 #if 'type=WebDriver' in html:
 freeCount=freeCheck()
 while freeCount>0:
-	Popen('python gridExecute.py 2 0 labstest.py 40000000 '+PHOST+'&',shell=True)
+	Popen('python gridExecute.py 2 0 labstest.py 40000000 '+PHOST+'&',shell=True,close_fds=True)
         time.sleep(10)
         try:
         	freeCount=freeCheck()
