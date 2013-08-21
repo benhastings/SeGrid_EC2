@@ -11,12 +11,12 @@ def freeCheck():
         try:
                 response=urllib2.urlopen('http://localhost:4200/grid/console')
                 html=response.read()
+        	count = html.count("platform=")
+        	return count
                 exit
         except urllib2.URLError:
                 pass
 
-        count = html.count("platform=")
-        return count
 
 # If resources available (first condition) add more requests
 #   - rename whatever test you want to run to the 'sdtest.py' value
@@ -24,15 +24,10 @@ def freeCheck():
 #if 'type=WebDriver' in html:
 freeCount=freeCheck()
 while freeCount>0:
-        if freeCount < 4:
-                Popen('python gridExecute.py '+str(idx)+' 0 labstest.py 4000000 '+PHOST+'&',shell=True)
-                freeCount = 0
+	Popen('python gridExecute.py 2 0 labstest.py 40000000 '+PHOST+'&',shell=True)
+        time.sleep(10)
+        try:
+        	freeCount=freeCheck()
+                #print('fc:'+str(freeCount))
+        except:
                 exit
-        else:
-                Popen('python gridExecute.py 4 0 labstest.py 4000000 '+PHOST+'&',shell=True)
-                time.sleep(60)
-                try:
-                        freeCount=freeCheck()
-                        print('fc:'+str(freeCount))
-                except:
-                        exit

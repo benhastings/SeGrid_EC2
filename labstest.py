@@ -59,10 +59,10 @@ def getPage(resource):
 	try:
 		#driver.get("http://"+baseURL)
 		resource
-		time.sleep(5)
+		time.sleep(.01)
 		if 'Load Test Search Results' in driver.title:
-			metricsCollect(titl,'NA')
-			time.sleep(5)
+			#metricsCollect(titl,'NA')
+			time.sleep(.01)
 		elif 'Error' in driver.title:
 			print 'Error, redirect to search Form'
 			driver.get("http://sdfe:Els3vier@"+baseURL)
@@ -70,7 +70,7 @@ def getPage(resource):
 			pass
 		else:
 			#metricsCollect(titl,'NA')
-			time.sleep(.25)
+			time.sleep(.05)
 	except urllib2.URLError:
 		print 'URLError'
 		pass
@@ -149,10 +149,10 @@ def metricsCollect(dtitl,ID):
 idx=0
 
 while numLoops > 0:
-	idx=int(random.random()*650001)
-	srIDX = idx%650000
+	idx=int(random.random()*350000)
+	srIDX = idx%349999
 
-	print('iteration: '+str(numLoops)+' browser:'+browser)
+	#print('iteration: '+str(numLoops)+' browser:'+browser)
 	"""
 	Define capabilities of remote webdriver
 			Specifically: assign browser type
@@ -162,59 +162,62 @@ while numLoops > 0:
 	#driver=webdriver.Chrome()
 
 	# Webdriver Usage with SeGrid
-	driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
-
-	time.sleep(.05)
-
-	#-------------------------------------------------
-	#       Find Search form then submit search
-	#-------------------------------------------------
-	try:
-		titl='Search Form'
-		getPage(driver.get("http://sdfe:Els3vier@"+baseURL))
-		time.sleep(.05)
-		assert "Load Test Search Form" in driver.title
-
+	try:	
+		driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
+	
+		time.sleep(.01)
+	
+		#-------------------------------------------------
+		#       Find Search form then submit search
+		#-------------------------------------------------
 		try:
-			sr = 10
-			while (sr > 0):
-				srIDX = idx%650000
-				#print('idx:'+str(idx))#+' srch:'+SRCH[srIDX])
-				try:
-					#print('find box by id')
-					srchBox = driver.find_element_by_id("quickSearch")
-					#print('found by id')
-				except:
-					#print('find box by xpath')
-					srchBox = driver.find_element_by_xpath("//input[contains(@name,'quickSearch')]")
-					#print('found by xpath')
-				finally:
-					pass
-
-				#print('enter search terms')
-				srchBox.send_keys(SRCH[srIDX])
-				time.sleep(.05)
-				#--- Submit Form --------
-				titl='Search'
-				#getPage(driver.find_element_by_xpath("//input[contains(@value,'Submit')]").click())
-				#print('click submit button')
-				#driver.find_element_by_xpath("//input[contains(@value,'Submit')]").click()
-				#time.sleep(10)
-				#metricsCollect(titl,'NA')
-
-
-
-				idx=idx+1								
-				sr=sr-1
-
+			titl='Search Form'
+			getPage(driver.get("http://sdfe:Els3vier@"+baseURL))
+			time.sleep(.01)
+			assert "Load Test Search Form" in driver.title
+	
+			try:
+				sr = 50
+				while (sr > 0):
+					srIDX = idx%349999
+					#print('idx:'+str(idx))#+' srch:'+SRCH[srIDX])
+					try:
+						#print('find box by id')
+						srchBox = driver.find_element_by_id("quickSearch")
+						#print('found by id')
+					except:
+						#print('find box by xpath')
+						srchBox = driver.find_element_by_xpath("//input[contains(@name,'quickSearch')]")
+						#print('found by xpath')
+					finally:
+						pass
+	
+					#print('enter search terms')
+					titl='Search'
+					getPage(srchBox.send_keys(SRCH[srIDX]))
+					time.sleep(.01)
+					#--- Submit Form --------
+					#titl='Search'
+					#getPage(driver.find_element_by_xpath("//input[contains(@value,'Submit')]").click())
+					#print('click submit button')
+					#driver.find_element_by_xpath("//input[contains(@value,'Submit')]").click()
+					#time.sleep(10)
+					#metricsCollect(titl,'NA')
+	
+	
+	
+					idx=idx+1								
+					sr=sr-1
+	
+			except:
+				print 'Search failed'
+				pass
+	
 		except:
-			print 'Search failed'
-			pass
-
+			'Search form not found'
+		numLoops = numLoops-1
+		idx=idx+1
+		egress()
+	#except if browser doesn't open
 	except:
-		'Search form not found'
-
-
-	numLoops = numLoops-1
-	idx=idx+1
-	egress()
+		pass
