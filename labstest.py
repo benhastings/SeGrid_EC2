@@ -154,7 +154,7 @@ while numLoops > 0:
 	idx=int(random.random()*1100)
 	srIDX = idx%1100
 
-	#print('iteration: '+str(numLoops)+' browser:'+browser)
+	print('iteration: '+str(numLoops)+' browser:'+browser)
 	"""
 	Define capabilities of remote webdriver
 			Specifically: assign browser type
@@ -165,12 +165,18 @@ while numLoops > 0:
 
 	# Webdriver Usage with SeGrid
 	try:	
+		#print('starting browser')
+		#driver=webdriver.Chrome()
 		driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
 	
 		time.sleep(.01)
 	
 		browserLoop=1000
+		#print(browserLoop)
+		#print('entering loop')
 		while(browserLoop > 0):
+			#print('in numLoops:'+str(numLoops)+'in browserloop:'+str(browserLoop))
+			
 			#-------------------------------------------------
 			#       Find Search form then submit search
 			#-------------------------------------------------
@@ -219,11 +225,14 @@ while numLoops > 0:
 		
 			except:
 				'Search form not found'
-			numLoops = numLoops-1
+			
 			idx=idx+1
 			browserLoop=browserLoop-1
 		egress()
+		#print('exiting browser')
+		numLoops = numLoops-1
 	#except if browser doesn't open
 	except:
+		print('unable to start browser')
 		time.sleep(5)
 		pass
