@@ -20,7 +20,7 @@ browser = sys.argv[2]
 #--- SeGrid Hub designation --------------------
 hub = sys.argv[3]
 
-baseURL='hothouse.atsonaws.com/loadTest/form'
+baseURL='10.151.86.155/loadTest/form'
 
 #--- Read List of Search Terms -----------------
 SRCH=[]
@@ -149,8 +149,10 @@ def metricsCollect(dtitl,ID):
 idx=0
 
 while numLoops > 0:
-	idx=int(random.random()*350000)
-	srIDX = idx%349999
+	#idx=int(random.random()*350000)
+	#srIDX = idx%349999
+	idx=int(random.random()*1100)
+	srIDX = idx%1100
 
 	#print('iteration: '+str(numLoops)+' browser:'+browser)
 	"""
@@ -167,56 +169,59 @@ while numLoops > 0:
 	
 		time.sleep(.01)
 	
-		#-------------------------------------------------
-		#       Find Search form then submit search
-		#-------------------------------------------------
-		try:
-			titl='Search Form'
-			getPage(driver.get("http://sdfe:Els3vier@"+baseURL))
-			time.sleep(.01)
-			assert "Load Test Search Form" in driver.title
-	
+		browserLoop=1000
+		while(browserLoop > 0):
+			#-------------------------------------------------
+			#       Find Search form then submit search
+			#-------------------------------------------------
 			try:
-				sr = 50
-				while (sr > 0):
-					srIDX = idx%349999
-					#print('idx:'+str(idx))#+' srch:'+SRCH[srIDX])
-					try:
-						#print('find box by id')
-						srchBox = driver.find_element_by_id("quickSearch")
-						#print('found by id')
-					except:
-						#print('find box by xpath')
-						srchBox = driver.find_element_by_xpath("//input[contains(@name,'quickSearch')]")
-						#print('found by xpath')
-					finally:
-						pass
-	
-					#print('enter search terms')
-					titl='Search'
-					getPage(srchBox.send_keys(SRCH[srIDX]))
-					time.sleep(.01)
-					#--- Submit Form --------
-					#titl='Search'
-					#getPage(driver.find_element_by_xpath("//input[contains(@value,'Submit')]").click())
-					#print('click submit button')
-					#driver.find_element_by_xpath("//input[contains(@value,'Submit')]").click()
-					#time.sleep(10)
-					#metricsCollect(titl,'NA')
-	
-	
-	
-					idx=idx+1								
-					sr=sr-1
-	
+				titl='Search Form'
+				getPage(driver.get("http://sdfe:Els3vier@"+baseURL))
+				time.sleep(.01)
+				assert "Load Test Search Form" in driver.title
+		
+				try:
+					sr = 50
+					while (sr > 0):
+						srIDX = idx%1100
+						#print('idx:'+str(idx))#+' srch:'+SRCH[srIDX])
+						try:
+							#print('find box by id')
+							srchBox = driver.find_element_by_id("quickSearch")
+							#print('found by id')
+						except:
+							#print('find box by xpath')
+							srchBox = driver.find_element_by_xpath("//input[contains(@name,'quickSearch')]")
+							#print('found by xpath')
+						finally:
+							pass
+		
+						#print('enter search terms')
+						titl='Search'
+						getPage(srchBox.send_keys(SRCH[srIDX]))
+						time.sleep(.01)
+						#--- Submit Form --------
+						#titl='Search'
+						#getPage(driver.find_element_by_xpath("//input[contains(@value,'Submit')]").click())
+						#print('click submit button')
+						#driver.find_element_by_xpath("//input[contains(@value,'Submit')]").click()
+						#time.sleep(10)
+						#metricsCollect(titl,'NA')
+		
+		
+		
+						idx=idx+1								
+						sr=sr-1
+		
+				except:
+					print 'Search failed'
+					pass
+		
 			except:
-				print 'Search failed'
-				pass
-	
-		except:
-			'Search form not found'
-		numLoops = numLoops-1
-		idx=idx+1
+				'Search form not found'
+			numLoops = numLoops-1
+			idx=idx+1
+			browserLoop=browserLoop-1
 		egress()
 	#except if browser doesn't open
 	except:
