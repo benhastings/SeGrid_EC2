@@ -27,7 +27,7 @@ SRCH=[]
 #csvRd = csv.reader(open('/opt/SeResources/SDSrchTerms.csv','rb'))
 #csvRd = csv.reader(open('C:/Scripts/SDSrchTerms.csv','rb'))
 try:
-        text_file = open("/home/ubuntu/labs_queries.txt", "r")
+        text_file = open("/home/ubuntu/labs_queries1200.txt", "r")
 except:
         text_file = open("C:/Scripts/labs_queries.txt", "r")
 
