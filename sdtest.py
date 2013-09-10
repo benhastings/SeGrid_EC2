@@ -25,7 +25,7 @@ hub = sys.argv[3]
 #--- Read List of PIIs -----------------
 PII=[]
 try:
-	csvRd = csv.reader(open('/opt/SeResources/piis-1m.csv','rb'))
+	csvRd = csv.reader(open('/home/ubuntu/PIIs_250k.csv','rb'))
 except:
 	csvRd = csv.reader(open('C:/Scripts/piis-1m.csv','rb'))
 for j in csvRd:
@@ -35,7 +35,7 @@ for j in csvRd:
 #--- Read List of Journals -----------------
 JRNL=[]
 try:
-	csvRd = csv.reader(open('/opt/SeResources/Journals.csv','rb'))
+	csvRd = csv.reader(open('/home/ubuntu/Journals.csv','rb'))
 except:
 	csvRd = csv.reader(open('C:/Scripts/Journals.csv','rb'))
 for j in csvRd:
@@ -44,7 +44,7 @@ for j in csvRd:
 #--- Read List of Search Terms -----------------
 SRCH=[]
 try:
-	csvRd = csv.reader(open('/opt/SeResources/SDSrchTerms.csv','rb'))
+	csvRd = csv.reader(open('/home/ubuntu/SDSrchTerms.csv','rb'))
 except:	
 	csvRd = csv.reader(open('C:/Scripts/SDSrchTerms.csv','rb'))
 for j in csvRd:
