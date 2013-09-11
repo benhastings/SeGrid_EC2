@@ -25,7 +25,8 @@ hub = sys.argv[3]
 #--- Read List of PIIs -----------------
 PII=[]
 try:
-	csvRd = csv.reader(open('/home/ubuntu/PIIs_250k.csv','rb'))
+	#csvRd = csv.reader(open('/home/ubuntu/PIIs_250k.csv','rb'))
+	csvRd = csv.reader(open('/home/ubuntu/PIIS_490.csv','rb'))
 except:
 	csvRd = csv.reader(open('C:/Scripts/piis-1m.csv','rb'))
 for j in csvRd:
@@ -188,6 +189,7 @@ while numLoops > loop:
 		#       Define baseURL for following transactions
 		#-------------------------------------------------
 		baseIDX=int(random.random()*300)
+		"""
 		if (baseIDX%4==0):
 			baseURL = 'cdc311-www.sciencedirect.com'
 		if (baseIDX%4==1):
@@ -195,6 +197,11 @@ while numLoops > loop:
 		if (baseIDX%4==2):
 			baseURL = 'cdc318-www.sciencedirect.com'
 		if (baseIDX%4==3):
+			baseURL = 'cdc314-www.sciencedirect.com'
+		"""
+		if (baseIDX%2==0):
+			baseURL = 'cdc311-www.sciencedirect.com'
+		if (baseIDX%2==1):
 			baseURL = 'cdc314-www.sciencedirect.com'
 		#baseURL = 'cdc323-www.sciencedirect.com'
 		#print(baseURL)		
