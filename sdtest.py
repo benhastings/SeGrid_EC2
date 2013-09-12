@@ -80,7 +80,9 @@ def getPage(resource):
 			time.sleep(60)
 			pass
 		elif 'ScienceDirect Error' in driver.title:
-			print 'SD-00x Error'
+			dt = datetime.datetime.now()
+                	dTm = str(dt.strftime("%Y/%m/%d %H:%M:%S%Z"))
+			print 'SD-00x Error'+dTm
 			time.sleep(1)
 			pass
 		elif 'Error' in driver.title:
@@ -203,7 +205,7 @@ while numLoops > loop:
 			baseURL = 'cdc311-www.sciencedirect.com'
 		if (baseIDX%2==1):
 			baseURL = 'cdc314-www.sciencedirect.com'
-		baseURL = 'cdc323-www.sciencedirect.com'
+		#baseURL = 'cdc323-www.sciencedirect.com'
 		#print(baseURL)		
 		#-------------------------------------------------
 		#       Load Home Page & Authenticate x% of iterations
