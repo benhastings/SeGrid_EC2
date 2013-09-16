@@ -5,7 +5,7 @@ import time
 # Find hostname to use for passing to webdriver
 resp=urllib2.urlopen('http://169.254.169.254/latest/meta-data/public-hostname')
 PHOST=resp.read()
-PHOST='localhost'
+#PHOST='localhost'
 
 # Poll Hub interface to determine free/busy status of resources
 def freeCheck():
