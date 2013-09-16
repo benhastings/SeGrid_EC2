@@ -16,7 +16,9 @@ def freeCheck():
         except urllib2.URLError:
                 pass
 
-        count = html.count("platform=")
+        free = html.count("platform=")
+        tot = html.count("chrome.png")
+        count = tot-free
         return count
 
 # If resources available (first condition) add more requests
@@ -25,8 +27,14 @@ def freeCheck():
 #if 'type=WebDriver' in html:
 freeCount=freeCheck()
 while freeCount>0:
-        Popen('python gridExecute.py 1 0 sdtest.py 4000000 '+PHOST+'&',shell=True,close_fds=True)
-        time.sleep(30)
+        if (freeCount > 5):
+                Popen('python gridExecute.py 5 0 sdtest.py 40000 '+PHOST+'&',shell=True,close_fds=True)
+        elif (freeCount > 2):
+                Popen('python gridExecute.py 2 0 sdtest.py 40000 '+PHOST+'&',shell=True,close_fds=True)
+        else:
+                Popen('python gridExecute.py 1 0 sdtest.py 40000 '+PHOST+'&',shell=True,close_fds=True)
+        
+        time.sleep(60)
         try:
                 freeCount=freeCheck()
                 #print('fc:'+str(freeCount))
