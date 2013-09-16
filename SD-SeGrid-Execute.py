@@ -16,9 +16,8 @@ def freeCheck():
         except urllib2.URLError:
                 pass
 
-        free = html.count("platform=")
-        tot = html.count("chrome.png")
-        count = tot-free
+        count = html.count("platform=")
+        
         return count
 
 # If resources available (first condition) add more requests
