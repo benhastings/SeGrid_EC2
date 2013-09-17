@@ -15,4 +15,4 @@ except urllib2.URLError:
 if 'Grid Console' in html:
         exit
 else:
-        Popen('java -Xmx512m -jar /home/ubuntu/selenium-server.jar -role hub -port 4200 -DPOOL_MAX=256 -timeout 300 -browserTimeout 60 -cleanUpCycle 900000&',shell=True)
+        Popen('java -Xmx512m -jar /home/ubuntu/selenium-server.jar -role hub -port 4200 -DPOOL_MAX=256 -timeout 300 -browserTimeout 60 -cleanUpCycle 5000&',shell=True)
