@@ -91,7 +91,7 @@ def getPage(resource):
 			pass
 		else:
 			if 'SD Content Delivery' in titl:
-				#metricsCollect(titl,Pii)
+				metricsCollect(titl,Pii)
 				pass
 			else:
 				#metricsCollect(titl,'NA')
