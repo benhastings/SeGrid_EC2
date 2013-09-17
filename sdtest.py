@@ -96,7 +96,7 @@ def getPage(resource):
 			else:
 				#metricsCollect(titl,'NA')
 				pass
-			time.sleep(.01)
+			time.sleep(.15)
 	except urllib2.URLError:
 		print 'URLError'
 		pass
@@ -245,7 +245,7 @@ while numLoops > loop:
 		#-------------------------------------------------
 		#      Add looping structure to minimize browser churn
 		#-------------------------------------------------
-		browserLoop=20				
+		browserLoop=5				
 		while(browserLoop > 0):
 			#-------------------------------------------------
 			#       View Article(s) with scrolling where possible
@@ -276,7 +276,7 @@ while numLoops > loop:
 					getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
 				except urllib2.URLError:
 					pass
-				time.sleep(.01)
+				time.sleep(.15)
 				try:
 					dtitl=driver.title[:50]
 					#print(dtitl[:50])
@@ -299,7 +299,7 @@ while numLoops > loop:
 							#print('search element found')
 							inputElement.send_keys(SRCH[SrIdx])
 							#print('search text entered')
-							time.sleep(.01)
+							time.sleep(.15)
 							#--- Submit Form --------
 							getPage(driver.find_element_by_xpath("//button[contains(@title,'Submit quick search')]").click())
 						except:
