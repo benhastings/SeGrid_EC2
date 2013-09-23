@@ -91,12 +91,12 @@ def getPage(resource):
 			pass
 		else:
 			if 'SD Content Delivery' in titl:
-				metricsCollect(titl,Pii)
+				#metricsCollect(titl,Pii)
 				pass
 			else:
 				#metricsCollect(titl,'NA')
 				pass
-			time.sleep(.15)
+			time.sleep(.25)
 	except urllib2.URLError:
 		print 'URLError'
 		pass
@@ -185,7 +185,7 @@ while numLoops > loop:
 	try:
 		driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
 	
-		time.sleep(.01)
+		time.sleep(.25)
 	
 		#-------------------------------------------------
 		#       Define baseURL for following transactions
@@ -245,7 +245,7 @@ while numLoops > loop:
 		#-------------------------------------------------
 		#      Add looping structure to minimize browser churn
 		#-------------------------------------------------
-		browserLoop=5				
+		browserLoop=2				
 		while(browserLoop > 0):
 			#-------------------------------------------------
 			#       View Article(s) with scrolling where possible
@@ -276,7 +276,7 @@ while numLoops > loop:
 					getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
 				except urllib2.URLError:
 					pass
-				time.sleep(.15)
+				time.sleep(.25)
 				try:
 					dtitl=driver.title[:50]
 					#print(dtitl[:50])
@@ -299,7 +299,7 @@ while numLoops > loop:
 							#print('search element found')
 							inputElement.send_keys(SRCH[SrIdx])
 							#print('search text entered')
-							time.sleep(.15)
+							time.sleep(.25)
 							#--- Submit Form --------
 							getPage(driver.find_element_by_xpath("//button[contains(@title,'Submit quick search')]").click())
 						except:
