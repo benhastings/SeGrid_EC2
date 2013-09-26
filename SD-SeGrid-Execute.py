@@ -11,7 +11,8 @@ PHOST='localhost'
 def freeCheck():
         try:
                 response=urllib2.urlopen('http://localhost:4200/grid/console')
-                html=response.read()
+                time.sleep(2)
+				html=response.read()
                 exit
         except urllib2.URLError:
                 pass
@@ -27,10 +28,16 @@ def freeCheck():
 freeCount=freeCheck()
 while freeCount>0:
         Popen('python gridExecute.py 2 0 sdtest.py 40000 '+PHOST+'&',shell=True,close_fds=True)
-        
-        time.sleep(60)
+		url2Send = urllib2.urlopen('http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.newScripts=2')        
+        time.sleep(30)
         try:
                 freeCount=freeCheck()
+				time.sleep(2)
                 #print('fc:'+str(freeCount))
         except:
                 exit
+
+
+
+
+		
