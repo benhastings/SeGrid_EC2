@@ -214,7 +214,7 @@ while numLoops > loop:
 		"""
 		#baseURL = 'cdc323-www.sciencedirect.com'
 		#print(baseURL)		
-		url2Send = urllib2.urlopen('http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.'+base+'.newBrowser=1')        
+		#url2Send = urllib2.urlopen('http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.'+base+'.newBrowser=1')        
 		#-------------------------------------------------
 		#       Load Home Page & Authenticate x% of iterations
 		#-------------------------------------------------
