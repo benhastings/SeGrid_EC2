@@ -31,8 +31,26 @@ freeCount=freeCheck()
 print 'count:'+str(freeCount[0])
 print 'busy:'+str(freeCount[1])
 
+# Check CPU 
+#process = subprocess.Popen('ps -eo pcpu,pid,user,args | sort -k 1 -r | head -10', shell=True, stdout=subprocess.PIPE)
+a=[]
+i=10
+while(i>0):
+	process = subprocess.Popen('ps -eo pcpu,pid,user,args | grep selenium-server.jar\ \-role', shell=True, stdout=subprocess.PIPE)
+	s=process.communicate()[0]
+	ss=s.split()
+	a.append(float(ss[0]))
+	i=i+1
+	time.sleep(30)
 
+def mean(numberList):
+    if len(numberList) == 0:
+        return float('nan')
+ 
+    floatNums = [float(x) for x in numberList]
+    return sum(floatNums) / len(numberList)
 
+mean(a)
 """
 while freeCount>0:
         #Popen('python gridExecute.py 2 0 sdtest.py 40000 '+PHOST+'&',shell=True,close_fds=True)
