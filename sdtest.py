@@ -191,15 +191,19 @@ while numLoops > loop:
 		#       Define baseURL for following transactions
 		#-------------------------------------------------
 		baseIDX=int(random.random()*300)
-		"""
+		
 		if (baseIDX%4==0):
 			baseURL = 'cdc311-www.sciencedirect.com'
+			base='cdc311'
 		if (baseIDX%4==1):
 			baseURL = 'cdc323-www.sciencedirect.com'
+			base='cdc323'
 		if (baseIDX%4==2):
 			baseURL = 'cdc318-www.sciencedirect.com'
+			base='cdc318'
 		if (baseIDX%4==3):
 			baseURL = 'cdc314-www.sciencedirect.com'
+			base='cdc314'
 		"""
 		if (baseIDX%3==0):
 			baseURL = 'cdc311-www.sciencedirect.com'
@@ -207,8 +211,10 @@ while numLoops > loop:
 			baseURL = 'cdc314-www.sciencedirect.com'
 		if (baseIDX%3==2):
 			baseURL = 'cdc323-www.sciencedirect.com'
+		"""
 		#baseURL = 'cdc323-www.sciencedirect.com'
 		#print(baseURL)		
+		url2Send = urllib2.urlopen('http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.'+base+'.newBrowser=1')        
 		#-------------------------------------------------
 		#       Load Home Page & Authenticate x% of iterations
 		#-------------------------------------------------
