@@ -13,8 +13,11 @@ try:
 	else:
         	Popen('java -jar /home/ubuntu/selenium-server.jar -role hub -port 4200 -DPOOL_MAX=256 -timeout 15 -browserTimeout 60 -cleanUpCycle 3000&',shell=True)
         exit
-except urllib2.ULError:
-        exit
+except urllib2.URLError as e:
+	Popen('java -jar /home/ubuntu/selenium-server.jar -role hub -port 4200 -DPOOL_MAX=256 -timeout 60 -browserTimeout 60 -cleanUpCycle 3000&',shell=True)
+        
+	exit
 except urllib2.HTTPError:
+	print 'HTTPError'
         exit
 
