@@ -13,12 +13,14 @@ def freeCheck():
                 response=urllib2.urlopen('http://localhost:4200/grid/console')
                 time.sleep(2)
 		html=response.read()
-                exit
+		count = html.count("platform=")
+                #exit
         except urllib2.URLError:
+                count = 0
+        except urllib2.HTTPError:
+                count = 0
                 pass
 
-        count = html.count("platform=")
-        
         return count
 
 # If resources available (first condition) add more requests
