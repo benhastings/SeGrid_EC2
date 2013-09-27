@@ -96,7 +96,16 @@ def getPage(resource):
 			else:
 				#metricsCollect(titl,'NA')
 				pass
+						
 			time.sleep(.25)
+                	try:
+				wp=0
+				wpEnt = driver.execute_script("return window.performance.getEntries().length")
+				while(wp != wpEnt):
+					time.sleep(.25)
+					wp = driver.execute_script("return window.performance.getEntries().length")
+			except:
+				pass
 	except urllib2.URLError:
 		print 'URLError'
 		pass
@@ -185,7 +194,7 @@ while numLoops > loop:
 	try:
 		driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
 	
-		time.sleep(.25)
+		time.sleep(.1)
 	
 		#-------------------------------------------------
 		#       Define baseURL for following transactions
@@ -214,7 +223,8 @@ while numLoops > loop:
 		"""
 		#baseURL = 'cdc323-www.sciencedirect.com'
 		#print(baseURL)		
-		#url2Send = urllib2.urlopen('http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.'+base+'.newBrowser=1')        
+		url2Send = urllib2.urlopen('http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.'+base+'.newBrowser=1')        
+		print(url2Send)
 		#-------------------------------------------------
 		#       Load Home Page & Authenticate x% of iterations
 		#-------------------------------------------------
@@ -251,7 +261,7 @@ while numLoops > loop:
 		#-------------------------------------------------
 		#      Add looping structure to minimize browser churn
 		#-------------------------------------------------
-		browserLoop=2				
+		browserLoop=5				
 		while(browserLoop > 0):
 			#-------------------------------------------------
 			#       View Article(s) with scrolling where possible
@@ -305,7 +315,7 @@ while numLoops > loop:
 							#print('search element found')
 							inputElement.send_keys(SRCH[SrIdx])
 							#print('search text entered')
-							time.sleep(.25)
+							time.sleep(.10)
 							#--- Submit Form --------
 							getPage(driver.find_element_by_xpath("//button[contains(@title,'Submit quick search')]").click())
 						except:

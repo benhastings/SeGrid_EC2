@@ -27,17 +27,22 @@ def freeCheck():
 #   - rename whatever test you want to run to the 'sdtest.py' value
 # Otherwise, exit and wait a while
 #if 'type=WebDriver' in html:
+freeCount=0
 freeCount=freeCheck()
-while freeCount>0:
-        Popen('python gridExecute.py 2 0 sdtest.py 40000 '+PHOST+'&',shell=True,close_fds=True)
-	url2Send = urllib2.urlopen('http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.newScripts=2')        
-        time.sleep(30)
+while freeCount>1:
+        Popen('python gridExecute.py 2 0 sdtest.py 400 '+PHOST+'&',shell=True,close_fds=True)
+	try:
+		url2Send = urllib2.urlopen('http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.newScripts=2')        
+        except:
+		pass
+	time.sleep(30)
         try:
                 freeCount=freeCheck()
 		time.sleep(2)
                 #print('fc:'+str(freeCount))
         except:
-                exit
+                freeCount=0
+		exit
 
 
 
