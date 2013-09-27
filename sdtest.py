@@ -77,24 +77,24 @@ def getPage(resource):
 		resource
 		if 'Unable to process' in driver.title:
 			print 'Error - Unable to process, wait 60 seconds'
-			time.sleep(60)
-			pass
+			time.sleep(10)
+			exit
 		elif 'ScienceDirect Error' in driver.title:
 			dt = datetime.datetime.now()
                 	dTm = str(dt.strftime("%Y/%m/%d %H:%M:%S%Z"))
 			print 'SD-00x Error'+dTm
 			time.sleep(1)
-			pass
+			exit
 		elif 'Error' in driver.title:
 			print 'Error, wait 60 seconds'
-			time.sleep(60)
-			pass
+			time.sleep(10)
+			exit
 		else:
 			if 'SD Content Delivery' in titl:
-				#metricsCollect(titl,Pii)
+			#	metricsCollect(titl,Pii)
 				pass
 			else:
-				#metricsCollect(titl,'NA')
+			#	metricsCollect(titl,'NA')
 				pass
 						
 			time.sleep(.25)
@@ -103,7 +103,9 @@ def getPage(resource):
 				wpEnt = driver.execute_script("return window.performance.getEntries().length")
 				while(wp != wpEnt):
 					time.sleep(.25)
+					wpEnt= wp
 					wp = driver.execute_script("return window.performance.getEntries().length")
+					#print('wpEnt:'+str(wpEnt)+' wp:'+str(wp))
 			except:
 				pass
 	except urllib2.URLError:
@@ -192,14 +194,16 @@ while numLoops > loop:
 	"""
 	#driver=webdriver.Chrome()
 	try:
+		#print('loading browser')
 		driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
-	
-		time.sleep(.1)
+		#print('wait for it...')	
+		#print datetime.datetime.now()
+		time.sleep(2)
 	
 		#-------------------------------------------------
 		#       Define baseURL for following transactions
 		#-------------------------------------------------
-		baseIDX=int(random.random()*300)
+		baseIDX=int(random.random()*30000)
 		
 		if (baseIDX%4==0):
 			baseURL = 'cdc311-www.sciencedirect.com'
@@ -223,8 +227,11 @@ while numLoops > loop:
 		"""
 		#baseURL = 'cdc323-www.sciencedirect.com'
 		#print(baseURL)		
-		url2Send = urllib2.urlopen('http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.'+base+'.newBrowser=1')        
-		print(url2Send)
+		#try:
+		#	url2Send = urllib2.urlopen('http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.'+base+'.newBrowser=1')        
+			#print(url2Send)
+		#except:
+		#	pass
 		#-------------------------------------------------
 		#       Load Home Page & Authenticate x% of iterations
 		#-------------------------------------------------
@@ -261,7 +268,7 @@ while numLoops > loop:
 		#-------------------------------------------------
 		#      Add looping structure to minimize browser churn
 		#-------------------------------------------------
-		browserLoop=5				
+		browserLoop=8				
 		while(browserLoop > 0):
 			#-------------------------------------------------
 			#       View Article(s) with scrolling where possible
@@ -346,5 +353,7 @@ while numLoops > loop:
 		idx=idx+1
 		egress()
 	except:
+		#print('loading browser failed')
+		print datetime.datetime.now()
 		time.sleep(10)
 		pass
