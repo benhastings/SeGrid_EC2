@@ -28,7 +28,7 @@ def freeCheck():
 	if wait > 0:
 		count=0
 	# if slots are free, proceed
-	else if free > 0:
+	elif free > 0:
 		count=free
 	# otherwise, do nothing further
 	else:
