@@ -262,7 +262,8 @@ while numLoops > loop:
 					except:
 						pass
 			except:
-					pass
+					egress()
+					exit
 	
 	
 		#-------------------------------------------------
@@ -305,6 +306,7 @@ while numLoops > loop:
 					#print(dtitl[:50])
 				except:
 					egress()
+					exit
 	
 				if artLoop > 0:
 					artLoop = artLoop-1
@@ -345,7 +347,8 @@ while numLoops > loop:
 							getPage(driver.get("http://"+baseURL+"/science/journal/"+str(JRNL[jIdx]).strip('[\']')))
 							jrnLoop=jrnLoop-1
 				except:
-					pass
+					egress()
+					exit
 					
 			browserLoop=browserLoop-1
 			#print(browserLoop)
