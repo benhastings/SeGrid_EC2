@@ -261,13 +261,15 @@ while numLoops > loop:
 				#print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
 				getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
 			except urllib2.URLError:
-				pass
+				egress()
+				exit
 			time.sleep(.05)
 			try:
 				dtitl=driver.title[:50]
 				#print(dtitl[:50])
 			except:
 				egress()
+				exit
 
 			if artLoop > 0:
 				artLoop = artLoop-1
@@ -308,7 +310,8 @@ while numLoops > loop:
 						getPage(driver.get("http://"+baseURL+"/science/journal/"+str(JRNL[jIdx]).strip('[\']')))
 						jrnLoop=jrnLoop-1
 			except:
-				pass
+				egress()
+				exit
 				
 		browserLoop=browserLoop-1
 		print(browserLoop)
