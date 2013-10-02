@@ -47,9 +47,9 @@ def freeCheck():
 freeCount=0
 freeCount=freeCheck()
 #print 'freeCount before loop:'+str(freeCount)
-while freeCount>1:
+while freeCount>3:
 	#print 'I have entered the loop'
-        ex=Popen('python gridExecute.py 2 0 sdtest.py 400 '+PHOST+'&',shell=True,close_fds=True)
+        ex=Popen('python gridExecute.py 4 0 sdtest.py 400 '+PHOST+'&',shell=True,close_fds=True)
 	exOut=ex.communicate()
 	print(exOut)
 	try:
