@@ -17,10 +17,10 @@ def freeCheck():
 		html=response.read()
 		# Check to see if any browsers are available
 		free = html.count("platform=")
-		#print 'free:'+str(free)
+		print 'free:'+str(free)
 		# Check to see if any scripts are queued
 		wait = html.count("waiting")
-                #print 'wait:'+str(wait)
+                print 'wait:'+str(wait)
 		#exit
         except urllib2.URLError:
                 count = 0
@@ -37,7 +37,7 @@ def freeCheck():
 	# otherwise, do nothing further
 	else:
 		count=0
-	#print 'return count of:'+str(count)
+	print 'return count of:'+str(count)
         return count
 
 # If resources available (first condition) add more requests
@@ -49,24 +49,25 @@ freeCount=freeCheck()
 #print 'freeCount before loop:'+str(freeCount)
 while freeCount>1:
 	#print 'I have entered the loop'
-        Popen('python gridExecute.py 2 0 sdtest.py 400 '+PHOST+'&',shell=True,close_fds=True)
+        ex=Popen('python gridExecute.py 2 0 sdtest.py 400 '+PHOST+'&',shell=True,close_fds=True)
+	exOut=ex.communicate()
+	print(exOut)
 	try:
 		#print 'I am trying to start more tests'
 		url2Send = urllib2.urlopen('http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.newScripts=2')        
-        	time.sleep(30)
+        	time.sleep(5)
         	try:
 	                freeCount=freeCheck()
-			time.sleep(2)
-                	#print('fc:'+str(freeCount))
         
 	        except:
 			freeCount=0
 			exit
+               	print('fc:'+str(freeCount))
 	
         except:
 		#print 'something failed, so leaving'
                 freeCount=0
-                time.sleep(30)
+                time.sleep(10)
 		exit
 
 
