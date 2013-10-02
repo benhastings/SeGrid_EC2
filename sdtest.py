@@ -65,6 +65,18 @@ def egress():
                 print ("----URLError - pass? ----")
                 pass
 
+#------------------------------------------------------
+# Function to send error details for tracking
+#------------------------------------------------------
+def errorReport(hName,titlN,msg):
+	sendBack='http://cert-pa.elsevier.com/perfTest?perfTest.error.cpc=SD&perfTest.error.cpc.host='+hName+'&perfTest.error.cpc.host.page='+titl+'&perfTest.error.cpc.host.page.msg='+msg
+	try:
+		url2Send = urllib2.urlopen(sendBack)        
+		#print('error url sent')
+	except:
+		#print('error url NOT sent')
+		pass
+
 
 #------------------------------------------------------
 #       Function to execute a request or page interaction
@@ -77,12 +89,14 @@ def getPage(resource):
 		resource
 		if 'Unable to process' in driver.title:
 			print 'Error - Unable to process, wait 60 seconds'
+			errorReport(base,titl,'Unable to Process')
 			time.sleep(10)
 			exit
 		elif 'ScienceDirect Error' in driver.title:
 			dt = datetime.datetime.now()
                 	dTm = str(dt.strftime("%Y/%m/%d %H:%M:%S%Z"))
 			print 'SD-00x Error'+dTm
+			errorReport(base,titl,'SD-00x')
 			time.sleep(1)
 			exit
 		elif 'Error' in driver.title:
@@ -110,9 +124,11 @@ def getPage(resource):
 				pass
 	except urllib2.URLError:
 		print 'URLError'
+		errorReport(base,titl,'URLError')
 		pass
 	except:
 		print (titl+' fail')
+		errorReport(base,titl,'Other')
 		pass
 
 
@@ -358,5 +374,6 @@ while numLoops > loop:
 	except:
 		#print('loading browser failed')
 		print datetime.datetime.now()
+		errorReport(base,titl,'Start Browser Fail')
 		time.sleep(10)
 		pass

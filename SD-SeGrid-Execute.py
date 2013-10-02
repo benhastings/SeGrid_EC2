@@ -55,7 +55,7 @@ while freeCount>1:
 	try:
 		#print 'I am trying to start more tests'
 		url2Send = urllib2.urlopen('http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.newScripts=2')        
-        	time.sleep(5)
+        	time.sleep(10)
         	try:
 	                freeCount=freeCheck()
         
@@ -67,7 +67,7 @@ while freeCount>1:
         except:
 		#print 'something failed, so leaving'
                 freeCount=0
-                time.sleep(10)
+                time.sleep(30)
 		exit
 
 
