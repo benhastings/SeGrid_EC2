@@ -111,7 +111,7 @@ def getPage(resource):
 			#	metricsCollect(titl,'NA')
 				pass
 						
-			time.sleep(.4)
+			time.sleep(.25)
                 	try:
 				wp=0
 				wpEnt = driver.execute_script("return window.performance.getEntries().length")
@@ -214,7 +214,7 @@ while numLoops > loop:
 		driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
 		#print('wait for it...')	
 		#print datetime.datetime.now()
-		time.sleep(2)
+		time.sleep(.25)
 	
 		#-------------------------------------------------
 		#       Define baseURL for following transactions
@@ -315,8 +315,9 @@ while numLoops > loop:
 					#print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
 					getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
 				except urllib2.URLError:
+					time.sleep(.25)	
 					pass
-				time.sleep(.25)
+				
 				try:
 					dtitl=driver.title[:50]
 					#print(dtitl[:50])
@@ -375,5 +376,5 @@ while numLoops > loop:
 		#print('loading browser failed')
 		print datetime.datetime.now()
 		errorReport(base,titl,'Start Browser Fail')
-		time.sleep(10)
+		time.sleep(5)
 		pass
