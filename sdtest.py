@@ -111,7 +111,7 @@ def getPage(resource):
 			#	metricsCollect(titl,'NA')
 				pass
 						
-			time.sleep(.25)
+			time.sleep(.4)
                 	try:
 				wp=0
 				wpEnt = driver.execute_script("return window.performance.getEntries().length")
