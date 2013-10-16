@@ -76,6 +76,18 @@ def errorReport(hName,titlN,msg):
 	except:
 		#print('error url NOT sent')
 		pass
+	
+#------------------------------------------------------
+# Function to send error details for tracking
+#------------------------------------------------------
+def newBrowser(base):
+	sendBack='http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.'+base+'.newBrowser=1
+	try:
+		url2Send = urllib2.urlopen(sendBack)        
+		#print('error url sent')
+	except:
+		#print('error url NOT sent')
+		pass
 
 
 #------------------------------------------------------
@@ -241,13 +253,10 @@ while numLoops > loop:
 		if (baseIDX%3==2):
 			baseURL = 'cdc323-www.sciencedirect.com'
 		"""
-		#baseURL = 'cdc323-www.sciencedirect.com'
-		#print(baseURL)		
-		#try:
-		#	url2Send = urllib2.urlopen('http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.'+base+'.newBrowser=1')        
-			#print(url2Send)
-		#except:
-		#	pass
+		try:
+			newBrowser(base)
+		except:
+			pass
 		#-------------------------------------------------
 		#       Load Home Page & Authenticate x% of iterations
 		#-------------------------------------------------
