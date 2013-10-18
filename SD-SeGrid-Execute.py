@@ -6,6 +6,9 @@ import time
 resp=urllib2.urlopen('http://169.254.169.254/latest/meta-data/public-hostname')
 PHOST=resp.read()
 PHOST='localhost'
+inst=urllib2.urlopen('http://169.254.169.254/latest/meta-data/instance-id')
+instID=inst.read()
+
 
 # Poll Hub interface to determine free/busy status of resources
 def freeCheck():
@@ -49,7 +52,7 @@ freeCount=freeCheck()
 #print 'freeCount before loop:'+str(freeCount)
 while freeCount>3:
 	#print 'I have entered the loop'
-        ex=Popen('python gridExecute.py 4 0 sdtest.py 400 '+PHOST+'&',shell=True,close_fds=True)
+        ex=Popen('python gridExecute.py 4 0 sdtest.py 400 '+PHOST+' '+instID+'&',shell=True,close_fds=True)
 	exOut=ex.communicate()
 	print(exOut)
 	try:
