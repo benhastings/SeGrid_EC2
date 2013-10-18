@@ -81,7 +81,7 @@ def errorReport(hName,titlN,msg):
 # Function to send error details for tracking
 #------------------------------------------------------
 def newBrowser(base):
-	sendBack='http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.'+base+'.newBrowser=1
+	sendBack='http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.'+base+'.newBrowser=1'
 	try:
 		url2Send = urllib2.urlopen(sendBack)        
 		#print('error url sent')
