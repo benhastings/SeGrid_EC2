@@ -102,7 +102,7 @@ if (system.args.length === 1) {
     console.log('Usage: netsniff.js <some URL>');
     phantom.exit(1);
 } else {
-
+    page.viewportSize = {width: 1280, height: 800};
     page.address = system.args[1];
     page.resources = [];
 
@@ -134,13 +134,19 @@ if (system.args.length === 1) {
             phantom.exit(1);
         } else {
             page.endTime = new Date();
-            page.title = page.evaluate(function () {
+            var ts=Date.now();
+	    //console.log('render to image'); 
+	    var fileImg='article'+ts+'.png';
+ 	    page.render(fileImg);	    
+            
+	    page.title = page.evaluate(function () {
                 return document.title;
             });
             har = createHAR(page.address, page.title, page.startTime, page.resources);
             //console.log(JSON.stringify(har, undefined, 4));
             //console.log(JSON.stringify(har, undefined, 4));
-            var file='article'+Date.now()+'.har';
+            var file='article'+ts+'.har';
+ 	    // stringify & write out HAR file
 	    var harOut=JSON.stringify(har);
 	    fs.write(file,harOut,'w'); 
       		
