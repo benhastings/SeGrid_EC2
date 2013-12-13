@@ -234,7 +234,7 @@ while numLoops > loop:
 		#       Define baseURL for following transactions
 		#-------------------------------------------------
 		baseIDX=int(random.random()*30000)
-		
+		"""
 		if (baseIDX%4==0):
 			baseURL = 'cdc311-www.sciencedirect.com'
 			base='cdc311'
@@ -254,7 +254,7 @@ while numLoops > loop:
 			baseURL = 'cdc314-www.sciencedirect.com'
 		if (baseIDX%3==2):
 			baseURL = 'cdc323-www.sciencedirect.com'
-		"""
+		
 		try:
 			newBrowser(base)
 		except:
