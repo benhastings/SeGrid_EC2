@@ -12,7 +12,7 @@ if (sys.args.length < 2 ) {
     pii=sys.args[2];
     url='http://'+domain+'/science/article/pii/'+pii;
     //url = 'http://www.sciencedirect.com/science/article/pii/S0020751900001272';
-    console.log(url);
+    //console.log(url);
     var s=Date.now();
     page.open(url, function (status) {
        if (status !== 'success') {
@@ -20,7 +20,7 @@ if (sys.args.length < 2 ) {
        } else {
           var t=Date.now()-s;
           console.log('load time:'+t);
-          console.log(page.evaluate(function () {return document.title;}));
+       //   console.log(page.evaluate(function () {return document.title;}));
        }
        phantom.exit();
    });
