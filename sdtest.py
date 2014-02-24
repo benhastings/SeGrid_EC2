@@ -248,12 +248,18 @@ while numLoops > loop:
 			baseURL = 'cdc314-www.sciencedirect.com'
 			base='cdc314'
 		"""
+		"""
 		if (baseIDX%3==0):
 			baseURL = 'cdc311-www.sciencedirect.com'
 		if (baseIDX%3==1):
 			baseURL = 'cdc314-www.sciencedirect.com'
 		if (baseIDX%3==2):
 			baseURL = 'cdc323-www.sciencedirect.com'
+		"""
+		if (baseIDX%2==0):
+			baseURL = 'cdc311-www.sciencedirect.com'
+		if (baseIDX%2==1):
+			baseURL = 'cdc314-www.sciencedirect.com'
 		
 		try:
 			newBrowser(base)
