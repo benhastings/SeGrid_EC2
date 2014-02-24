@@ -268,7 +268,7 @@ while numLoops > loop:
 		#-------------------------------------------------
 		#       Load Home Page & Authenticate x% of iterations
 		#-------------------------------------------------
-		login = int(random.random()*100)
+		login = int(random.random()*1000)
 		if (login%100 < 50):
 			#--- Request Home Page ----------------------------------------
 			titl='Home Page'
@@ -308,12 +308,13 @@ while numLoops > loop:
 			#       View Article(s) with scrolling where possible
 			#               View multiple articles in same session 33%
 			#-------------------------------------------------
-			artLoop = 1
+			artLoop = 10
+			"""
 			if (login%3==0):
 					artLoop=8
 			else:
 					artLoop=4
-	
+			"""
 			#print ('artLoop: '+str(artLoop))
 			
 			#Comment out for sequential evaluation of articles
