@@ -299,13 +299,13 @@ while numLoops > loop:
 		#-------------------------------------------------
 		#      Add looping structure to minimize browser churn
 		#-------------------------------------------------
-		browserLoop=8				
+		browserLoop=4				
 		while(browserLoop > 0):
 			#-------------------------------------------------
 			#       View Article(s) with scrolling where possible
 			#               View multiple articles in same session 33%
 			#-------------------------------------------------
-			artLoop = 10
+			artLoop = 5
 			"""
 			if (login%3==0):
 					artLoop=8
@@ -347,7 +347,7 @@ while numLoops > loop:
 	
 				try:
 					#if (login%6 == 0):
-					if (artLoop%5 == 0):
+					if (artLoop%5 == 1):
 						titl='Search'
 						SrIdx = int(random.random()*100)%100
 						#print('trying search')	
@@ -363,7 +363,7 @@ while numLoops > loop:
 							print ('Search form not found '+baseURL)
 							pass
 					#if (login%6 > 4):
-					if (artLoop%5 == 4):
+					if (artLoop%5 == 3):
 						#--- Load Browse List - "Category List" -------------
 						titl='Category List'
 						#print('trying browse')	
