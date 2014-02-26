@@ -8,7 +8,7 @@ PHOST=resp.read()
 PHOST='localhost'
 inst=urllib2.urlopen('http://169.254.169.254/latest/meta-data/instance-id')
 instID=inst.read()
-
+print(instID)
 
 # Poll Hub interface to determine free/busy status of resources
 def freeCheck():
