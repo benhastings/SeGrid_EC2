@@ -233,7 +233,7 @@ while numLoops > loop:
 		#-------------------------------------------------
 		#       Define baseURL for following transactions
 		#-------------------------------------------------
-		baseIDX=int(random.random()*30000)
+		baseIDX=int(random.random()*300)
 		"""
 		if (baseIDX%4==0):
 			baseURL = 'cdc311-www.sciencedirect.com'
@@ -265,7 +265,7 @@ while numLoops > loop:
 		#-------------------------------------------------
 		#       Load Home Page & Authenticate x% of iterations
 		#-------------------------------------------------
-		login = int(random.random()*1000)
+		login = int(random.random()*100)
 		if (login%100 < 50):
 			#--- Request Home Page ----------------------------------------
 			titl='Home Page'
@@ -320,7 +320,7 @@ while numLoops > loop:
 			
 			while artLoop > 0:
 				#--- Define Random Value ---------------
-				#idx = int(random.random()*250000)
+				idx = int(random.random()*450)
 				idxPii=idx
 				#print('articleIDX:'+str(idx))
 				Pii=str(PII[idxPii]).strip('[\']')
@@ -339,11 +339,11 @@ while numLoops > loop:
 				except:
 					egress()
 					exit
-	
+				"""	
 				if artLoop > 0:
 					artLoop = artLoop-1
 					idx = idx+1
-	
+				"""
 	
 				try:
 					#if (login%6 == 0):
@@ -382,6 +382,10 @@ while numLoops > loop:
 					egress()
 					exit
 					
+				if artLoop > 0:
+					artLoop = artLoop-1
+					idx = idx+1
+	
 			browserLoop=browserLoop-1
 			#print(browserLoop)
 		loop = loop+1
