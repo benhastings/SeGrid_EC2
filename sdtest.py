@@ -28,9 +28,11 @@ instID = sys.argv[4]
 PII=[]
 try:
 	#csvRd = csv.reader(open('/home/ubuntu/PIIs_250k.csv','rb'))
-	csvRd = csv.reader(open('/home/ubuntu/PIIS_490.csv','rb'))
+	csvRd = csv.reader(open('/home/ubuntu/PIIS_30k.csv','rb'))
+	piiCount = 29000
 except:
 	csvRd = csv.reader(open('C:/Scripts/piis-1m.csv','rb'))
+	piiCount = 29000
 for j in csvRd:
         PII.append(j)
 
@@ -120,13 +122,15 @@ def getPage(resource):
 		else:
 			if 'SD Content Delivery' in titl:
 			#	metricsCollect(titl,Pii)
+				time.sleep(2)
 				pass
 			else:
 			#	metricsCollect(titl,'NA')
 				pass
 						
 			time.sleep(.25)
-                	try:
+                	"""
+			try:
 				wp=0
 				wpEnt = driver.execute_script("return window.performance.getEntries().length")
 				while(wp != wpEnt):
@@ -136,6 +140,7 @@ def getPage(resource):
 					#print('wpEnt:'+str(wpEnt)+' wp:'+str(wp))
 			except:
 				pass
+			"""
 	except urllib2.URLError:
 		print 'URLError'
 		errorReport(base,titl,'URLError')
@@ -248,6 +253,7 @@ while numLoops > loop:
 			baseURL = 'cdc314-www.sciencedirect.com'
 			base='cdc314'
 		"""
+		"""
 		if (baseIDX%3==0):
 			baseURL = 'cdc311-www.sciencedirect.com'
 			base='cdc311'
@@ -257,7 +263,13 @@ while numLoops > loop:
 		if (baseIDX%3==2):
 			baseURL = 'cdc323-www.sciencedirect.com'
 			base='cdc323'
-		
+		"""
+		if (baseIDX%2==0):
+			baseURL = 'cdc311-www.sciencedirect.com'
+			base='cdc311'
+		if (baseIDX%2==1):
+			baseURL = 'cdc314-www.sciencedirect.com'
+			base='cdc314'
 		try:
 			newBrowser(base)
 		except:
@@ -320,7 +332,7 @@ while numLoops > loop:
 			
 			while artLoop > 0:
 				#--- Define Random Value ---------------
-				idx = int(random.random()*450)
+				idx = int(random.random()*piiCount)
 				idxPii=idx
 				#print('articleIDX:'+str(idx))
 				Pii=str(PII[idxPii]).strip('[\']')
