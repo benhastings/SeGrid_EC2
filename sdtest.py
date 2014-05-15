@@ -28,7 +28,7 @@ instID = sys.argv[4]
 PII=[]
 try:
 	#csvRd = csv.reader(open('/home/ubuntu/PIIs_250k.csv','rb'))
-	csvRd = csv.reader(open('/home/ubuntu/PIIS_30k.csv','rb'))
+	csvRd = csv.reader(open('/home/ubuntu/PIIs_30k.csv','rb'))
 	piiCount = 29000
 except:
 	csvRd = csv.reader(open('C:/Scripts/piis-1m.csv','rb'))
