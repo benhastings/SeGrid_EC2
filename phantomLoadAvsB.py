@@ -31,5 +31,6 @@ while users>0:
   #print 'I have entered the loop'
   ex=Popen('python ~/phantomRun.py '+PHOST+' '+testDurationSecs+' '+renderArticles+' '+env+ '&',shell=True,close_fds=True)
   users=users-1
+  time.sleep(20)
 	
 

@@ -47,6 +47,7 @@ var waitFor = function(testFx, onReady, timeOutMillis) {
                 if(!condition) {
                     // If condition still not fulfilled (timeout but condition is 'false')
                     console.log("'waitFor()' timeout");
+                    doRender();
                     phantom.exit(1);
                 } else {
                     // Condition fulfilled (timeout and/or condition is 'true')
@@ -81,7 +82,8 @@ page.viewportSize = {
 };
 
 function doRender() {
-    var SDMPii=page.evaluate(function(){return SDM.pm.pii;});
+    //var SDMPii=page.evaluate(function(){return SDM.pm.pii;});
+    var SDMPii=startPII;
     tm=Date.now();
     page.render('phantom-'+SDMPii+'-'+tm+ '.png');
      //phantom.exit();
@@ -100,7 +102,9 @@ page.open(url, function(status) {
             return page.evaluate(function() {
                 //return $("div.refText.svRefs").is(":visible");
                 //return $("p.copyright").is(":visible");
+	       if(document.querySelector('span.logoScienceDirectImg')){
                 return document.querySelector('p.copyright')!==null;
+	       }
             });
         },	
         function(){//What to do when the waitFor condition is met
