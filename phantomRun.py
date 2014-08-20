@@ -57,6 +57,7 @@ while endTime > int(time.time()):
 	#print(inputPII)
 	#print 'I am trying the phantomJS request now'
 	#ex=Popen('phantomjs article.js '+hostNm+' '+inputPII+' '+renderArticles,stdout=PIPE)#,close_fds=True,shell=True)
+	l.append('sd.article.phantom.'+env+'.total:1|c\n')
 	ex=Popen(['phantomjs', 'article.js',hostNm,inputPII,renderArticles,env],stdout=PIPE)#,close_fds=True,shell=True)
 	exOut=ex.communicate()
 	#print('ex.communicate below:')
@@ -73,7 +74,11 @@ while endTime > int(time.time()):
 		l.append('sd.article.phantom.'+env+'.pass:1|c\n')
 	except:
 		print('something wrong with article: '+inputPII+' '+exOut[0])
-		l.append('sd.article.phantom.'+env+'.fail:1|c\n')
+		try:
+		  if exOut[0].index('Error'):
+		    l.append('sd.article.phantom.'+env+'.fail:1|c\n')
+		except:
+		  pass
 	time.sleep(.25)
         
 	loop=loop-1
