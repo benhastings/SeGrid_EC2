@@ -2,13 +2,14 @@ from subprocess import Popen
 import sys
 import urllib2
 import time
+import random
 
 users=int(sys.argv[1])
 PHOST=sys.argv[2]
 duration=float(sys.argv[3])
 renderArticles=sys.argv[4]
-
-testDurationSecs=str(duration*3600)
+envM=sys.argv[5]
+testDurationSecs=str(int(duration*3600))
 
 # # Find hostname to use for passing to webdriver
 # resp=urllib2.urlopen('http://169.254.169.254/latest/meta-data/public-hostname')
@@ -19,8 +20,16 @@ testDurationSecs=str(duration*3600)
 # print(instID)
 
 while users>0:
-	#print 'I have entered the loop'
-        	ex=Popen('python phantomRun.py '+PHOST+' '+testDurationSecs+' '+renderArticles+ '&',shell=True,close_fds=True)
-        	users=users-1
+  if 'cert' in envM:
+    idx=int((random.random()*10)%2)
+    if idx==0:
+      env='cdc311'
+    elif idx==1:
+      env='cdc314'
+  else:    	
+    env='prod'
+  #print 'I have entered the loop'
+  ex=Popen('python ~/phantomRun.py '+PHOST+' '+testDurationSecs+' '+renderArticles+' '+env+ '&',shell=True,close_fds=True)
+  users=users-1
 	
 

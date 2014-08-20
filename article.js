@@ -11,9 +11,13 @@ if(system.args[2]){
 } else {console.log('must invoke script with "phantomjs <scriptName> <hostName> <PII>"')}
 
 var renderArticles= system.args[3]
+var env=system.args[4]
 
-var url='http://'+hostNm+'/science/article/pii/'+startPII;
-
+if(env=='prod'){
+  var url='http://'+hostNm+'/science/article/pii/'+startPII;
+} else {
+  var url='http://'+env+'-'+hostNm+'/science/article/pii/'+startPII;
+}
 //---------------------------------------------------------------
 //	Helper Function waitFor.js -https://github.com/ariya/phantomjs/blob/master/examples/waitfor.js
 // 		Referenced: http://www.princeton.edu/~crmarsh/phantomjs/
@@ -32,7 +36,7 @@ var url='http://'+hostNm+'/science/article/pii/'+startPII;
  */
 //function waitFor(testFx, onReady, timeOutMillis) {
 var waitFor = function(testFx, onReady, timeOutMillis) {
-    var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 15000, //< Default Max Timout is 15s
+    var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 10000, //< Default Max Timout is 15s
         start = new Date().getTime(),
         condition = false,
         interval = setInterval(function() {
@@ -94,13 +98,14 @@ page.open(url, function(status) {
     waitFor( //Invoking function to define a wait condition and 
         function(){//Condition upon which to wait
             return page.evaluate(function() {
-		//return $("div.refText.svRefs").is(":visible");
-		return $("p.copyright").is(":visible");
+                //return $("div.refText.svRefs").is(":visible");
+                //return $("p.copyright").is(":visible");
+                return document.querySelector('p.copyright')!==null;
             });
         },	
         function(){//What to do when the waitFor condition is met
             var endTimer=Date.now();
-            if(endTimer && startTimer){console.log('article:'+(endTimer-startTimer));} else {console.log('something failed with timers')}
+            if(endTimer && startTimer){console.log('article:'+(endTimer-startTimer)+'ms');} else {console.log('something failed with timers')}
             if(renderArticles==1){
                 doRender()
             }
