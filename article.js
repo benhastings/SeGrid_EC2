@@ -63,7 +63,7 @@ var waitFor = function(testFx, onReady, timeOutMillis) {
 //var url='http://www.sciencedirect.com/science/article/pii/S2095254614000271'
 
 //Initialize General Variables
-var resourceWait  = 300,
+var ttlb=0,resourceWait  = 300,
     maxRenderWait = 10000,
     count=0,
     curReq=0,
@@ -80,6 +80,20 @@ page.viewportSize = {
   width: 1280,
   height: 600
 };
+
+page.onResourceReceived = function (res) {
+      if(res.id==1 && (!res.stage || res.stage === 'end')){ 
+	//console.log('ttlb: '+(res.time.getTime()-startTimer+'ms'));    
+	ttlb=res.time.getTime()-startTimer;
+      }
+  /*if(res.id < 10){
+    if (!res.stage || res.stage === 'end') {
+        count -= 1;
+        console.log(res.id + ' ' + res.status + ' - ' + res.url.split('/')[2] +' - '+res.time.getTime());
+    }
+  }*/
+};
+
 
 function doRender() {
     //var SDMPii=page.evaluate(function(){return SDM.pm.pii;});
@@ -109,7 +123,7 @@ page.open(url, function(status) {
         },	
         function(){//What to do when the waitFor condition is met
             var endTimer=Date.now();
-            if(endTimer && startTimer){console.log('article:'+(endTimer-startTimer)+'ms');} else {console.log('something failed with timers')}
+            if(endTimer && startTimer){console.log('article:'+(endTimer-startTimer)+'ms ttlb:'+ttlb+'ms');} else {console.log('something failed with timers')}
             if(renderArticles==1){
                 doRender()
             }

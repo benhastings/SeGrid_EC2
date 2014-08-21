@@ -66,11 +66,17 @@ while endTime > int(time.time()):
 	#print(inputPII)
 	try:
 		#print('find duration')
-		ms=exOut[0][exOut[0].index(':')+1:exOut[0].index('ms')]
-		#print(inputPII+' '+ms)
-		#print('add timer to statsD')
-		l.append('sd.article.phantom.'+env+':'+ms+'|ms\n')
-		#print('add counter to statsD')
+		exS=exOut[0].split(' ')
+		lt=exS[0].split(':')[1]
+		tt=exS[1].split(':')[1]		
+		#print tt[0:tt.index('ms')]
+		#print lt[0:lt.index('ms')]
+
+		msTtlb= tt[0:tt.index('ms')]
+		msLoad=lt[0:lt.index('ms')]
+		
+		l.append('sd.article.phantom.'+env+'.load:'+msLoad+'|ms\n')
+		l.append('sd.article.phantom.'+env+'.ttlb:'+msTtlb+'|ms\n')
 		l.append('sd.article.phantom.'+env+'.pass:1|c\n')
 	except:
 		print('something wrong with article: '+inputPII+' '+exOut[0])
