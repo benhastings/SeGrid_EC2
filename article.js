@@ -47,7 +47,7 @@ var waitFor = function(testFx, onReady, timeOutMillis) {
                 if(!condition) {
                     // If condition still not fulfilled (timeout but condition is 'false')
                     console.log("'waitFor()' timeout "+env+ ' '+startPII);
-                    doRender();
+                    //doRender();
                     phantom.exit(1);
                 } else {
                     // Condition fulfilled (timeout and/or condition is 'true')
