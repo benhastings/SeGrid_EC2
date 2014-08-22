@@ -8,6 +8,7 @@ import csv
 import random
 import sys
 import urllib2
+import socket
 
 
 #------------------------------------------------------------
@@ -21,6 +22,15 @@ browser = sys.argv[2]
 hub = sys.argv[3]
 
 instID = sys.argv[4]
+
+
+statsDHost='ec2-54-80-6-76.compute-1.amazonaws.com'
+"""
+  Define UDP connection to send data to statsD
+"""
+UDPSock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+## statsd host & port
+addr=(statsDHost,8125)
 
 
 
@@ -120,27 +130,17 @@ def getPage(resource):
 			time.sleep(10)
 			exit
 		else:
+			l.append('sd.Selenium.'+base+'.'+titl+'.pass:1|c\n')
+			metricsCollect(titl)
+			"""
 			if 'SD Content Delivery' in titl:
-			#	metricsCollect(titl,Pii)
-				time.sleep(2)
+				time.sleep(1)
 				pass
 			else:
-			#	metricsCollect(titl,'NA')
 				pass
-						
+			"""			
 			time.sleep(.25)
-                	"""
-			try:
-				wp=0
-				wpEnt = driver.execute_script("return window.performance.getEntries().length")
-				while(wp != wpEnt):
-					time.sleep(.25)
-					wpEnt= wp
-					wp = driver.execute_script("return window.performance.getEntries().length")
-					#print('wpEnt:'+str(wpEnt)+' wp:'+str(wp))
-			except:
-				pass
-			"""
+                
 	except urllib2.URLError:
 		print 'URLError'
 		errorReport(base,titl,'URLError')
@@ -157,7 +157,7 @@ def getPage(resource):
 #---------------
 
 #def metricsCollect(dtitl,PII,sections):
-def metricsCollect(dtitl,ID):
+def metricsCollect(dtitl):
         try:
                 navS = driver.execute_script("return performance.timing.navigationStart")
                 #print(navS)
@@ -165,48 +165,24 @@ def metricsCollect(dtitl,ID):
                 respE = driver.execute_script("return performance.timing.responseEnd")
                 dom = driver.execute_script("return performance.timing.domInteractive")
                 loadE = driver.execute_script("return performance.timing.loadEventEnd")
+                domCLoad = driver.execute_script("return performance.timing.domContentLoadedEventEnd")
                 domC = str(driver.execute_script("return document.getElementsByTagName('*').length"))
                 if loadE > navS:
                         pgLoad = str(int(loadE-navS))
                         domI = str(int(dom-navS))
+                        domCL = str(int(domCLoad-navS))
                         cont = str(int(respE-navS))
                         ttfb = str(int(respS-navS))
                         #print('\nperf details found\n')
-                else:
-                        pgLoad = 'NA'
-                        domI='NA'
-                        cont='NA'
-                        ttfb = 'NA'
-                        #print('perf details NOT found')
-
-
-
-                # Datetime for Timestamp
-                dt = datetime.datetime.now()
-                dTm = str(dt.strftime("%Y/%m/%d %H:%M:%S%Z"))
-                
-                if 'SD Content Delivery' in dtitl:
-                #       if sections > 0:
-                #               print(browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+PII+'\t'+sections)
-                #       else:
-                        print(browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+ID)
-                else:
-                        print(browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+dtitl)
+                        l.append('sd.Selenium.'+base+'.'+titl+'.ttfb:'+ttfb+'|ms\n')
+                        l.append('sd.Selenium.'+base+'.'+titl+'.pgl:'+pgLoad+'|ms\n')
+                        l.append('sd.Selenium.'+base+'.'+titl+'.pgi:'+domI+'|ms\n')
+                        l.append('sd.Selenium.'+base+'.'+titl+'.domcl:'+domCL+'|ms\n')
+                        l.append('sd.Selenium.'+base+'.'+titl+'.html:'+cont+'|ms\n')
+    
                 
         except:
-                if 'Pii' in globals():
-                        print('Unable to print perfTiming details, PII:'+Pii)
-                else:
-                        print('Unable to print perfTiming details')
-                try:
-                        driver.quit()
-                #except WindowsError:
-                #       print ("******WindowsError - pass? ****")
-                #       pass
-                except urllib2.URLError:
-                                print ("------URLError - pass? ----")
-                                pass
-
+                pass
         #
         # End metricsCollect()
         #
@@ -311,6 +287,7 @@ while numLoops > loop:
 		#-------------------------------------------------
 		#      Add looping structure to minimize browser churn
 		#-------------------------------------------------
+		l=[]
 		browserLoop=4				
 		while(browserLoop > 0):
 			#-------------------------------------------------
@@ -400,6 +377,9 @@ while numLoops > loop:
 	
 			browserLoop=browserLoop-1
 			#print(browserLoop)
+			statsDdata=''.join(l)
+			print(statsDdata)
+			UDPSock.sendto(statsDdata,addr)
 		loop = loop+1
 		idx=idx+1
 		egress()
