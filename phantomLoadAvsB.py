@@ -21,7 +21,7 @@ testDurationSecs=str(int(duration*3600))
 
 while users>0:
   if 'cert' in envM:
-    idx=int((random.random()*10)%2)
+    idx=users%2
     if idx==0:
       env='cdc311'
     elif idx==1:
