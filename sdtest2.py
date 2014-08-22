@@ -23,7 +23,8 @@ hub = sys.argv[3]
 
 instID = sys.argv[4]
 
-
+base=''
+titl=''
 statsDHost='ec2-54-80-6-76.compute-1.amazonaws.com'
 """
   Define UDP connection to send data to statsD
@@ -203,10 +204,11 @@ while numLoops > loop:
 	Define capabilities of remote webdriver
 			Specifically: assign browser type
 	"""
-	#driver=webdriver.Chrome()
+	
 	try:
 		#print('loading browser')
 		driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
+		#driver=webdriver.Chrome()
 		#print('wait for it...')	
 		#print datetime.datetime.now()
 		time.sleep(.25)
@@ -256,7 +258,7 @@ while numLoops > loop:
 		login = int(random.random()*100)
 		if (login%100 < 50):
 			#--- Request Home Page ----------------------------------------
-			titl='Home Page'
+			titl='Home_Page'
 			getPage(driver.get("http://"+baseURL))
 	
 			#--- Find Login Form & Fill in data ---------------------------
@@ -313,7 +315,7 @@ while numLoops > loop:
 				idxPii=idx
 				#print('articleIDX:'+str(idx))
 				Pii=str(PII[idxPii]).strip('[\']')
-				titl = 'SD Content Delivery'
+				titl = 'Content_Delivery'
 				#sStart = time.time()
 				try:
 					#print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
@@ -354,14 +356,14 @@ while numLoops > loop:
 					#if (login%6 > 4):
 					if (artLoop%5 == 3):
 						#--- Load Browse List - "Category List" -------------
-						titl='Category List'
+						titl='Browse_List'
 						#print('trying browse')	
 						getPage(driver.get("http://"+baseURL+"/science/browse"))
 	
 						#--- Load Journal Home Pages - "Category Home" ------
 						jrnLoop = 2
 						while jrnLoop > 0:
-							titl='Category Home'
+							titl='Journal_Home'
 							idx=idx+jrnLoop
 							jIdx=idx%2500
 							#print('trying journal')	
