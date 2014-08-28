@@ -253,7 +253,7 @@ while numLoops > loop:
 			baseURL = 'cdc314-www.sciencedirect.com'
 			base='cdc314'
 		"""
-		"""
+		
 		if (baseIDX%3==0):
 			baseURL = 'cdc311-www.sciencedirect.com'
 			base='cdc311'
@@ -261,8 +261,8 @@ while numLoops > loop:
 			baseURL = 'cdc314-www.sciencedirect.com'
 			base='cdc314'
 		if (baseIDX%3==2):
-			baseURL = 'cdc323-www.sciencedirect.com'
-			base='cdc323'
+			baseURL = 'cdc334-www.sciencedirect.com'
+			base='cdc334'
 		"""
 		if (baseIDX%2==0):
 			baseURL = 'cdc311-www.sciencedirect.com'
@@ -270,6 +270,7 @@ while numLoops > loop:
 		if (baseIDX%2==1):
 			baseURL = 'cdc314-www.sciencedirect.com'
 			base='cdc314'
+		"""
 		try:
 			newBrowser(base)
 		except:
@@ -379,7 +380,7 @@ while numLoops > loop:
 						#--- Load Browse List - "Category List" -------------
 						titl='Category List'
 						#print('trying browse')	
-						getPage(driver.get("http://"+baseURL+"/science/browse"))
+						getPage(driver.get("http://"+baseURL+"/science/journals"))
 	
 						#--- Load Journal Home Pages - "Category Home" ------
 						jrnLoop = 2
