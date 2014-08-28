@@ -11,8 +11,8 @@ hostNm=sys.argv[1]
 duration=int(sys.argv[2])
 renderArticles=sys.argv[3]
 env=sys.argv[4]
-statsDHost='ec2-54-80-6-76.compute-1.amazonaws.com'
-
+#statsDHost='ec2-54-80-6-76.compute-1.amazonaws.com'
+statsDHost='graphite.elsst.com'
 
 """
   Input Data collection/Definition
