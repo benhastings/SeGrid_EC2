@@ -3,20 +3,21 @@ var system=require('system');
 
 if(system.args[1]){
     //console.log(system.args[1])
-    var hostNm=system.args[1];
-} else {console.log('must invoke script with "phantomjs <scriptName> <hostName> <PII>"')}
+    var env=system.args[1];
+} else {console.log('must invoke script with "phantomjs <env Name> <PII> <render - 0/1>"')}
 if(system.args[2]){
     //console.log(system.args[2])
     var startPII=system.args[2]
-} else {console.log('must invoke script with "phantomjs <scriptName> <hostName> <PII>"')}
+} else {console.log('must invoke script with "phantomjs <env Name> <PII> <render - 0/1>"')}
 
 var renderArticles= system.args[3]
-var env=system.args[4]
 
 if(env=='prod'){
-  var url='http://'+hostNm+'/science/article/pii/'+startPII;
+  var url='http://www.sciencedirect.com/science/article/pii/'+startPII;
+} else if(env.indexOf('sdfe')>-1){
+  var url='http://www.'+env+'.sciencedirect.com/science/article/pii/'+startPII;
 } else {
-  var url='http://'+env+'-'+hostNm+'/science/article/pii/'+startPII;
+  var url='http://'+env+'-www.sciencedirect.com/science/article/pii/'+startPII;
 }
 //---------------------------------------------------------------
 //	Helper Function waitFor.js -https://github.com/ariya/phantomjs/blob/master/examples/waitfor.js
@@ -36,7 +37,7 @@ if(env=='prod'){
  */
 //function waitFor(testFx, onReady, timeOutMillis) {
 var waitFor = function(testFx, onReady, timeOutMillis) {
-    var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 10000, //< Default Max Timout is 15s
+    var maxtimeOutMillis = timeOutMillis ? timeOutMillis : 15000, //< Default Max Timout is 15s
         start = new Date().getTime(),
         condition = false,
         interval = setInterval(function() {
@@ -81,6 +82,8 @@ page.viewportSize = {
   height: 600
 };
 
+page.customHeaders={'Authorization':'Basic '+btoa('sdfe-engineers:Target947Tirpitz')}
+
 page.onResourceReceived = function (res) {
       if(res.id==1 && (!res.stage || res.stage === 'end')){ 
 	//console.log('ttlb: '+(res.time.getTime()-startTimer+'ms'));    
@@ -110,14 +113,22 @@ function doRender() {
 var startTimer=Date.now();
 page.open(url, function(status) {
     //console.log(status);
+            if(renderArticles==1){
+                doRender()
+            }
     if(status==='success'){
     waitFor( //Invoking function to define a wait condition and 
         function(){//Condition upon which to wait
             return page.evaluate(function() {
                 //return $("div.refText.svRefs").is(":visible");
                 //return $("p.copyright").is(":visible");
+	       //If Legacy SD page, look for copyright
 	       if(document.querySelector('span.logoScienceDirectImg')){
                 return document.querySelector('p.copyright')!==null;
+	       }
+	       // IF SDFE page, look for copyright 
+               else if (document.querySelector('img#sd-logo')){
+		return document.querySelector('p#copyright-line')!=null
 	       }
             });
         },	

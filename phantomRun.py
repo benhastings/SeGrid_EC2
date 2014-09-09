@@ -7,10 +7,9 @@ import csv
 import random
 import socket
 
-hostNm=sys.argv[1]
+env=sys.argv[1]
 duration=int(sys.argv[2])
 renderArticles=sys.argv[3]
-env=sys.argv[4]
 #statsDHost='ec2-54-80-6-76.compute-1.amazonaws.com'
 statsDHost='graphite.elsst.com'
 
@@ -45,6 +44,12 @@ addr=(statsDHost,8125)
 endTime = int(time.time()+duration)
 #endTime = int(time.time()+30)
 
+try:
+  if env.index('sdfe') > 0:
+    envPrint=env[:env.index('sdfe')]
+except:
+  envPrint=env
+
 #while loops>0:
 while endTime > int(time.time()):
    l=[]
@@ -54,11 +59,12 @@ while endTime > int(time.time()):
 	idxPii=idx
 	#print('articleIDX:'+str(idx))
 	inputPII=str(PII[idxPii]).strip('[\']')
+	inputPII='S0008874905000535'
 	#print(inputPII)
 	#print 'I am trying the phantomJS request now'
 	#ex=Popen('phantomjs article.js '+hostNm+' '+inputPII+' '+renderArticles,stdout=PIPE)#,close_fds=True,shell=True)
-	l.append('sd.article.phantom.'+env+'.total:1|c\n')
-	ex=Popen(['phantomjs', 'article.js',hostNm,inputPII,renderArticles,env],stdout=PIPE)#,close_fds=True,shell=True)
+	l.append('sd.article.phantom.'+envPrint+'.total:1|c\n')
+	ex=Popen(['phantomjs', 'article.js',env,inputPII,renderArticles],stdout=PIPE)#,close_fds=True,shell=True)
 	exOut=ex.communicate()
 	#print('ex.communicate below:')
 	#print(exOut)
@@ -75,14 +81,14 @@ while endTime > int(time.time()):
 		msTtlb= tt[0:tt.index('ms')]
 		msLoad=lt[0:lt.index('ms')]
 		
-		l.append('sd.article.phantom.'+env+'.load:'+msLoad+'|ms\n')
-		l.append('sd.article.phantom.'+env+'.ttlb:'+msTtlb+'|ms\n')
-		l.append('sd.article.phantom.'+env+'.pass:1|c\n')
+		l.append('sd.article.phantom.'+envPrint+'.load:'+msLoad+'|ms\n')
+		l.append('sd.article.phantom.'+envPrint+'.ttlb:'+msTtlb+'|ms\n')
+		l.append('sd.article.phantom.'+envPrint+'.pass:1|c\n')
 	except:
 		print('something wrong with article: '+inputPII+' '+exOut[0])
 		try:
 		  if exOut[0].index('Error'):
-		    l.append('sd.article.phantom.'+env+'.fail:1|c\n')
+		    l.append('sd.article.phantom.'+envPrint+'.fail:1|c\n')
 		except:
 		  pass
 	time.sleep(.25)
