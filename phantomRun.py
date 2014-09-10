@@ -19,8 +19,8 @@ statsDHost='graphite.elsst.com'
 
 PII=[]
 try:
-	csvRd = csv.reader(open('/home/ubuntu/PIIs_250k.csv','rb'))
-	piiCount = 250000
+	csvRd = csv.reader(open('/home/ubuntu/sdfePIIwhitelist.csv','rb'))
+	piiCount = 4320
 except:
 	csvRd = csv.reader(open('C:/Scripts/piis-1m.csv','rb'))
 	piiCount = 1000000
