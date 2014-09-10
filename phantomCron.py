@@ -20,6 +20,6 @@ toRun=total-running-1
 print 'toRun: '+str(toRun)
 
 if toRun > 1:
-  ex=Popen('python phantomLoadAvsB.py '+str(toRun)+' www.sciencedirect.com 6 0 cert&',shell=True,close_fds=True)
+  ex=Popen('python phantomLoadPvsS.py '+str(toRun)+' www.sciencedirect.com 6 0 cert&',shell=True,close_fds=True)
 
 
