@@ -30,7 +30,8 @@ while users>0:
   else:    	
     env='prod'
   """
-  envs=['banana.sdfe','cdc314']
+  #envs=['banana.sdfe','cdc314']
+  envs=['prod.sdfe','cdc314']
   for env in envs:
     ex=Popen('python ~/phantomRun.py '+env+' '+testDurationSecs+' '+renderArticles+'&',shell=True,close_fds=True)
   users=users-2
