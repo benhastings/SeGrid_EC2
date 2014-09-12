@@ -141,7 +141,11 @@ page.open(url, function(status) {
 	    //return (endTimer-startTimer)
             phantom.exit();
         });
-    }
+    } else {
+    	console.log('page not opened successfully')
+    	phantom.exit()
+    	
+    };
 });
 
 
