@@ -409,5 +409,4 @@ while numLoops > loop:
 		print datetime.datetime.now()
 		errorReport(base,titl,'Start Browser Fail')
 		time.sleep(5)
-		egress()
 		pass
