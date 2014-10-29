@@ -239,7 +239,7 @@ while numLoops > loop:
 		#       Define baseURL for following transactions
 		#-------------------------------------------------
 		baseIDX=int(random.random()*300)
-		"""
+		
 		if (baseIDX%4==0):
 			baseURL = 'cdc311-www.sciencedirect.com'
 			base='cdc311'
@@ -247,8 +247,8 @@ while numLoops > loop:
 			baseURL = 'cdc323-www.sciencedirect.com'
 			base='cdc323'
 		if (baseIDX%4==2):
-			baseURL = 'cdc318-www.sciencedirect.com'
-			base='cdc318'
+			baseURL = 'cdc334-www.sciencedirect.com'
+			base='cdc334'
 		if (baseIDX%4==3):
 			baseURL = 'cdc314-www.sciencedirect.com'
 			base='cdc314'
@@ -263,7 +263,7 @@ while numLoops > loop:
 		if (baseIDX%3==2):
 			baseURL = 'cdc334-www.sciencedirect.com'
 			base='cdc334'
-		"""
+		
 		if (baseIDX%2==0):
 			baseURL = 'cdc311-www.sciencedirect.com'
 			base='cdc311'
