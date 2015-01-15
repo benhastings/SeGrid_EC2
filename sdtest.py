@@ -8,11 +8,14 @@ import csv
 import random
 import sys
 import urllib2
+import socket
 
 
 #------------------------------------------------------------
 #--- Get Interactive Input for number of loops to execute ---
-numLoops = int(sys.argv[1])
+#numLoops = int(sys.argv[1])
+timeToRun=int(sys.argv[1])
+endTime=int(time.time()+timeToRun)
 
 #--- Browser definition for Grid usage ----------
 browser = sys.argv[2]
@@ -23,15 +26,23 @@ hub = sys.argv[3]
 instID = sys.argv[4]
 
 
+statsDHost='ec2-54-80-6-76.compute-1.amazonaws.com'
+"""
+  Define UDP connection to send data to statsD
+"""
+UDPSock = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+## statsd host & port
+addr=(statsDHost,8125)
+
 
 #--- Read List of PIIs -----------------
 PII=[]
 try:
-	#csvRd = csv.reader(open('/home/ubuntu/PIIs_250k.csv','rb'))
-	csvRd = csv.reader(open('/home/ubuntu/PIIs_30k.csv','rb'))
+	csvRd = csv.reader(open('/home/ubuntu/PIIs_250k.csv','rb'))
+	#csvRd = csv.reader(open('/home/ubuntu/PIIs_30k.csv','rb'))
 	piiCount = 29000
 except:
-	csvRd = csv.reader(open('C:/Scripts/piis-1m.csv','rb'))
+	csvRd = csv.reader(open('./PIIs_250k.csv','rb'))
 	piiCount = 29000
 for j in csvRd:
         PII.append(j)
@@ -42,7 +53,7 @@ JRNL=[]
 try:
 	csvRd = csv.reader(open('/home/ubuntu/Journals.csv','rb'))
 except:
-	csvRd = csv.reader(open('C:/Scripts/Journals.csv','rb'))
+	csvRd = csv.reader(open('./Journals.csv','rb'))
 for j in csvRd:
         JRNL.append(j)
 
@@ -51,7 +62,7 @@ SRCH=[]
 try:
 	csvRd = csv.reader(open('/home/ubuntu/SDSrchTerms.csv','rb'))
 except:	
-	csvRd = csv.reader(open('C:/Scripts/SDSrchTerms.csv','rb'))
+	csvRd = csv.reader(open('./SDSrchTerms.csv','rb'))
 for j in csvRd:
         SRCH.append(j)
 
@@ -60,37 +71,40 @@ for j in csvRd:
 #               after incrementing loop variables
 #-----------
 def egress():
-        try:
-                driver.quit()
-        #except WindowsError:
-        #        print ("****WindowsError - pass? ****")
-        #        pass
-        except urllib2.URLError:
-                print ("----URLError - pass? ----")
-                pass
+	try:
+		driver.quit()
+		# except WindowsError:
+		# 	print ("****WindowsError - pass? ****")
+		# 	pass
+	except urllib2.URLError:
+		# print ("----URLError - pass? ----")
+		pass
 
 #------------------------------------------------------
 # Function to send error details for tracking
 #------------------------------------------------------
 def errorReport(hName,titlN,msg):
 	sendBack='http://cert-pa.elsevier.com/perfTest?perfTest.error.cpc=SD&perfTest.error.cpc.host='+hName+'&perfTest.error.cpc.host.page='+titl+'&perfTest.error.cpc.host.page.msg='+msg
+	l.append('sd.Selenium.error.'+base+'.'+titlN+':1|c\n')
+
 	try:
 		url2Send = urllib2.urlopen(sendBack)        
-		#print('error url sent')
+		print('error url sent')
 	except:
-		#print('error url NOT sent')
+		print('error url NOT sent')
 		pass
 	
 #------------------------------------------------------
 # Function to send error details for tracking
 #------------------------------------------------------
 def newBrowser(base):
-	sendBack='http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.'+base+'.newBrowser=1&perfTest.cpc.'+base+'.id='+instID
+	# sendBack='http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.'+base+'.newBrowser=1&perfTest.cpc.'+base+'.id='+instID
+	l.append('sd.Selenium.'+base+'.newBrowser:1|c\n')
 	try:
 		url2Send = urllib2.urlopen(sendBack)        
-		#print('error url sent')
+		print('error url sent')
 	except:
-		#print('error url NOT sent')
+		print('error url NOT sent')
 		pass
 
 
@@ -104,49 +118,33 @@ def getPage(resource):
 		#driver.get("http://"+baseURL)
 		resource
 		if 'Unable to process' in driver.title:
-			print 'Error - Unable to process, wait 60 seconds'
+			# print 'Error - Unable to process, wait 60 seconds'
 			errorReport(base,titl,'Unable to Process')
 			time.sleep(10)
 			exit
 		elif 'ScienceDirect Error' in driver.title:
 			dt = datetime.datetime.now()
                 	dTm = str(dt.strftime("%Y/%m/%d %H:%M:%S%Z"))
-			print 'SD-00x Error'+dTm
+			# print 'SD-00x Error'+dTm
 			errorReport(base,titl,'SD-00x')
 			time.sleep(1)
 			exit
 		elif 'Error' in driver.title:
-			print 'Error, wait 60 seconds'
+			# print 'Error, wait 60 seconds'
 			time.sleep(10)
 			exit
 		else:
-			if 'SD Content Delivery' in titl:
-			#	metricsCollect(titl,Pii)
-				time.sleep(2)
-				pass
-			else:
-			#	metricsCollect(titl,'NA')
-				pass
+			# l.append('sd.Selenium.'+base+'.'+titl+'.pass:1|c\n')
+			metricsCollect(titl)
 						
 			time.sleep(.25)
-                	"""
-			try:
-				wp=0
-				wpEnt = driver.execute_script("return window.performance.getEntries().length")
-				while(wp != wpEnt):
-					time.sleep(.25)
-					wpEnt= wp
-					wp = driver.execute_script("return window.performance.getEntries().length")
-					#print('wpEnt:'+str(wpEnt)+' wp:'+str(wp))
-			except:
-				pass
-			"""
+
 	except urllib2.URLError:
-		print 'URLError'
+		# print 'URLError'
 		errorReport(base,titl,'URLError')
 		pass
 	except:
-		print (titl+' fail')
+		# print (titl+' fail')
 		errorReport(base,titl,'Other')
 		pass
 
@@ -157,59 +155,50 @@ def getPage(resource):
 #---------------
 
 #def metricsCollect(dtitl,PII,sections):
-def metricsCollect(dtitl,ID):
-        try:
-                navS = driver.execute_script("return performance.timing.navigationStart")
-                #print(navS)
-                respS = driver.execute_script("return performance.timing.responseStart")
-                respE = driver.execute_script("return performance.timing.responseEnd")
-                dom = driver.execute_script("return performance.timing.domInteractive")
-                loadE = driver.execute_script("return performance.timing.loadEventEnd")
-                domC = str(driver.execute_script("return document.getElementsByTagName('*').length"))
-                if loadE > navS:
-                        pgLoad = str(int(loadE-navS))
-                        domI = str(int(dom-navS))
-                        cont = str(int(respE-navS))
-                        ttfb = str(int(respS-navS))
-                        #print('\nperf details found\n')
-                else:
-                        pgLoad = 'NA'
-                        domI='NA'
-                        cont='NA'
-                        ttfb = 'NA'
-                        #print('perf details NOT found')
+def metricsCollect(dtitl):
+	try:
+		navS = driver.execute_script("return performance.timing.navigationStart")
+		# print('navS: '+str(navS))
+		respS = driver.execute_script("return performance.timing.responseStart")
+		respE = driver.execute_script("return performance.timing.responseEnd")
+		dom = driver.execute_script("return performance.timing.domInteractive")
+		loadE = driver.execute_script("return performance.timing.loadEventEnd")
+		domCLoad = driver.execute_script("return performance.timing.domContentLoadedEventEnd")
+		# domC = str(driver.execute_script("return document.getElementsByTagName('*').length"))
+		if (dtitl.find('Content_Delivery')>0):
+			pcrT=driver.execute_script("return prs.abs_end")
+		elif (dtitl.find('Category_Home')>0):
+			prs=driver.execute_script('return prs')
+			prsT=[]
+			prsT.append(prs['pcr'])
+			prsT.append(prs['pcr_nav'])
+			pcrT=sorted(prsT)[1]
+		else:
+			pcrT=driver.execute_script("return prs.pcr")
+		if loadE > navS:
+			pgLoad = str(int(loadE-navS))
+			domI = str(int(dom-navS))
+			domCL = str(int(domCLoad-navS))
+			cont = str(int(respE-navS))
+			ttfb = str(int(respS-navS))
+			pcr = str(int(pcrT-navS))
+			# print(titl +' '+str(pcr))
+			# print('\nperf details found\n')
+			l.append('sd.Selenium.'+base+'.'+titl+'.ttfb:'+ttfb+'|ms\n')
+			l.append('sd.Selenium.'+base+'.'+titl+'.pgl:'+pgLoad+'|ms\n')
+			l.append('sd.Selenium.'+base+'.'+titl+'.pgi:'+domI+'|ms\n')
+			l.append('sd.Selenium.'+base+'.'+titl+'.domcl:'+domCL+'|ms\n')
+			l.append('sd.Selenium.'+base+'.'+titl+'.html:'+cont+'|ms\n')
+			l.append('sd.Selenium.'+base+'.'+titl+'.pcr:'+pcr+'|ms\n')
+			# print l
 
 
-
-                # Datetime for Timestamp
-                dt = datetime.datetime.now()
-                dTm = str(dt.strftime("%Y/%m/%d %H:%M:%S%Z"))
-                
-                if 'SD Content Delivery' in dtitl:
-                #       if sections > 0:
-                #               print(browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+PII+'\t'+sections)
-                #       else:
-                        print(browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+ID)
-                else:
-                        print(browser+'\t'+dTm+'\t'+pgLoad+'\t'+domI+'\t'+cont+'\t'+ttfb+'\t'+domC+'\t'+dtitl)
-                
-        except:
-                if 'Pii' in globals():
-                        print('Unable to print perfTiming details, PII:'+Pii)
-                else:
-                        print('Unable to print perfTiming details')
-                try:
-                        driver.quit()
-                #except WindowsError:
-                #       print ("******WindowsError - pass? ****")
-                #       pass
-                except urllib2.URLError:
-                                print ("------URLError - pass? ----")
-                                pass
-
-        #
-        # End metricsCollect()
-        #
+	except:
+		pass
+	#
+	#
+	# End metricsCollect()
+	#
 
 
 #=============================================================
@@ -220,39 +209,27 @@ def metricsCollect(dtitl,ID):
 
 #--- Define static Article Value for looping
 idx=0
-loop=1
-while numLoops > loop:
-	#print('iteration: '+str(loop)+' browser:'+browser)
+while endTime > time.time():
 	"""
 	Define capabilities of remote webdriver
 			Specifically: assign browser type
 	"""
-	#driver=webdriver.Chrome()
+	
 	try:
-		#print('loading browser')
-		driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
-		#print('wait for it...')	
-		#print datetime.datetime.now()
+		# print('loading browser')
+		#driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
+		driver=webdriver.Chrome()
+		# print('wait for it...')	
+		# print datetime.datetime.now()
 		time.sleep(.25)
 	
+		# Initialize array for holding metrics to send to graphite
+		l = []
+
 		#-------------------------------------------------
 		#       Define baseURL for following transactions
 		#-------------------------------------------------
 		baseIDX=int(random.random()*300)
-		"""
-		if (baseIDX%4==0):
-			baseURL = 'cdc311-www.sciencedirect.com'
-			base='cdc311'
-		if (baseIDX%4==1):
-			baseURL = 'cdc323-www.sciencedirect.com'
-			base='cdc323'
-		if (baseIDX%4==2):
-			baseURL = 'cdc334-www.sciencedirect.com'
-			base='cdc334'
-		if (baseIDX%4==3):
-			baseURL = 'cdc314-www.sciencedirect.com'
-			base='cdc314'
-		"""
 		
 		if (baseIDX%3==0):
 			baseURL = 'cdc311-www.sciencedirect.com'
@@ -262,15 +239,11 @@ while numLoops > loop:
 			base='cdc314'
 		if (baseIDX%3==2):
 			baseURL = 'cdc318-www.sciencedirect.com'
-			base='cdc334'
-		"""
-		if (baseIDX%2==0):
-			baseURL = 'cdc311-www.sciencedirect.com'
-			base='cdc311'
-		if (baseIDX%2==1):
-			baseURL = 'cdc314-www.sciencedirect.com'
-			base='cdc314'
-		"""
+			base='cdc318'
+
+		baseURL = 'cdc314-www.sciencedirect.com'
+		base='cdc314'
+
 		try:
 			newBrowser(base)
 		except:
@@ -281,7 +254,7 @@ while numLoops > loop:
 		login = int(random.random()*100)
 		if (login%100 < 50):
 			#--- Request Home Page ----------------------------------------
-			titl='Home Page'
+			titl='Home_Page'
 			getPage(driver.get("http://"+baseURL))
 	
 			#--- Find Login Form & Fill in data ---------------------------
@@ -293,7 +266,7 @@ while numLoops > loop:
 	
 				#--- Submit the form based on element ID ----------------
 				titl='U/P Auth to Home Page'
-				getPage(driver.find_element_by_name("arrow").click())
+				driver.find_element_by_name("arrow").click()
 	
 				#--- If choose Org screen displayed, select appropriate value
 				if 'Choose Organization' in driver.title:
@@ -325,7 +298,7 @@ while numLoops > loop:
 			else:
 					artLoop=4
 			"""
-			#print ('artLoop: '+str(artLoop))
+			# print ('artLoop: '+str(artLoop))
 			
 			#Comment out for sequential evaluation of articles
 			#idx = int(random.random()*499000)
@@ -335,12 +308,12 @@ while numLoops > loop:
 				#--- Define Random Value ---------------
 				idx = int(random.random()*piiCount)
 				idxPii=idx
-				#print('articleIDX:'+str(idx))
+				# print('articleIDX:'+str(idx))
 				Pii=str(PII[idxPii]).strip('[\']')
-				titl = 'SD Content Delivery'
+				titl = 'Content_Delivery'
 				#sStart = time.time()
 				try:
-					#print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
+					# print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
 					getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
 				except urllib2.URLError:
 					time.sleep(.25)	
@@ -348,7 +321,7 @@ while numLoops > loop:
 				
 				try:
 					dtitl=driver.title[:50]
-					#print(dtitl[:50])
+					# print(dtitl[:50])
 				except:
 					egress()
 					exit
@@ -360,35 +333,45 @@ while numLoops > loop:
 	
 				try:
 					#if (login%6 == 0):
-					if (artLoop%5 == 1):
-						titl='Search'
+					if (artLoop%5 < 2):
+					# if (artLoop%5 < 6):
+						titl='Search_Results'
 						SrIdx = int(random.random()*100)%100
-						#print('trying search')	
+						# print('trying search')	
+
+						srString=str(SRCH[SrIdx]).strip('[\']').decode('string_escape')
+						# print srString
 						try:
-							inputElement = driver.find_element_by_id("quickSearch")
-							#print('search element found')
-							inputElement.send_keys(SRCH[SrIdx])
-							#print('search text entered')
-							time.sleep(.10)
-							#--- Submit Form --------
-							getPage(driver.find_element_by_xpath("//button[contains(@title,'Submit quick search')]").click())
+							dtitl=driver.title#[:50]
+							# print 'dtitl: '+dtitl
+							# Article Page Search
+							s=driver.find_element_by_css_selector('input#quickSearch')
+							s.send_keys(srString)
+							getPage(driver.find_element_by_css_selector('input.submit').click())
+
+							# # Other Pages					
+							# s=d.find_element_by_id("qs_all")
+							# >>> s.send_keys('berries')
+							# >>> d.find_element_by_id("submit_search").click()
+
 						except:
-							print ('Search form not found '+baseURL)
+							# print ('Search form not found '+baseURL)
+							time.sleep(.5)
 							pass
 					#if (login%6 > 4):
-					if (artLoop%5 == 3):
+					if (artLoop%5 > 2):
 						#--- Load Browse List - "Category List" -------------
-						titl='Category List'
-						#print('trying browse')	
+						titl='Category_List'
+						# print('trying browse')	
 						getPage(driver.get("http://"+baseURL+"/science/journals"))
 	
 						#--- Load Journal Home Pages - "Category Home" ------
 						jrnLoop = 2
 						while jrnLoop > 0:
-							titl='Category Home'
+							titl='Category_Home'
 							idx=idx+jrnLoop
-							jIdx=idx%2500
-							#print('trying journal')	
+							jIdx=idx%120
+							# print('trying journal')	
 							getPage(driver.get("http://"+baseURL+"/science/journal/"+str(JRNL[jIdx]).strip('[\']')))
 							jrnLoop=jrnLoop-1
 				except:
@@ -400,13 +383,28 @@ while numLoops > loop:
 					idx = idx+1
 	
 			browserLoop=browserLoop-1
-			#print(browserLoop)
+			# print(browserLoop)
+		
+			# print 'join statsDdata'	
+			statsDdata=''.join(l)
+			# print('here is statsDdata')
+			# print(statsDdata)
+			UDPSock.sendto(statsDdata,addr)
+			l=[]
 		loop = loop+1
 		idx=idx+1
 		egress()
 	except:
-		#print('loading browser failed')
-		print datetime.datetime.now()
+		if(len(l) > 0):
+			statsDdata=''.join(l)
+			# print('here is statsDdata')
+			# print(statsDdata)
+			UDPSock.sendto(statsDdata,addr)
+
+		# print('loading browser failed')
+		# print time.time()
+		# print titl
 		errorReport(base,titl,'Start Browser Fail')
+		print(statsDdata)
 		time.sleep(5)
 		pass
