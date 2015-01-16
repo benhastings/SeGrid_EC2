@@ -217,8 +217,8 @@ while endTime > time.time():
 	
 	try:
 		# print('loading browser')
-		#driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
-		driver=webdriver.Chrome()
+		driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
+		#driver=webdriver.Chrome()
 		# print('wait for it...')	
 		# print datetime.datetime.now()
 		time.sleep(.25)
@@ -241,8 +241,8 @@ while endTime > time.time():
 			baseURL = 'cdc318-www.sciencedirect.com'
 			base='cdc318'
 
-		baseURL = 'cdc314-www.sciencedirect.com'
-		base='cdc314'
+		# baseURL = 'cdc314-www.sciencedirect.com'
+		# base='cdc314'
 
 		try:
 			newBrowser(base)
