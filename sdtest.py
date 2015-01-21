@@ -85,36 +85,18 @@ def egress():
 # Function to send error details for tracking
 #------------------------------------------------------
 def errorReport(hName,titlN,msg):
-	#sendBack='http://cert-pa.elsevier.com/perfTest?perfTest.error.cpc=SD&perfTest.error.cpc.host='+hName+'&perfTest.error.cpc.host.page='+titl+'&perfTest.error.cpc.host.page.msg='+msg
 	l.append('sd.Selenium.error.'+base+'.'+titlN+':1|c\n')
 	try:
 	  print('error - '+msg+' '+titlN+' '+driver.title)
 	except:
 	  print('error - '+msg+' '+titlN)
 
-	"""
-	try:
-		url2Send = urllib2.urlopen(sendBack)        
-		print('error url sent: '+msg)
-	except:
-		print('error url NOT sent: '+msg)
-		pass
-	"""
 #------------------------------------------------------
 # Function to send error details for tracking
 #------------------------------------------------------
 def newBrowser(base):
-	# sendBack='http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.'+base+'.newBrowser=1&perfTest.cpc.'+base+'.id='+instID
 	l.append('sd.Selenium.'+base+'.newBrowser:1|c\n')
 	print('new Browser - '+base)
-	"""
-	try:
-		url2Send = urllib2.urlopen(sendBack)        
-		print('new Browser notification sent')
-	except:
-		print('new Browser NOT sent')
-		pass
-	"""
 
 #------------------------------------------------------
 #       Function to execute a request or page interaction
@@ -128,7 +110,7 @@ def getPage(resource):
 		if 'Unable to process' in driver.title:
 			# print 'Error - Unable to process, wait 60 seconds'
 			errorReport(base,titl,'Unable to Process')
-			time.sleep(10)
+			time.sleep(60)
 			exit
 		elif 'ScienceDirect Error' in driver.title:
 			dt = datetime.datetime.now()
@@ -164,49 +146,60 @@ def getPage(resource):
 
 #def metricsCollect(dtitl,PII,sections):
 def metricsCollect(dtitl):
+  print(dtitl+' - trying metricsCollect')
+  try:
+    navS = driver.execute_script("return performance.timing.navigationStart")
+    print('navS: '+str(navS)+' '+dtitl)
+    respS = driver.execute_script("return performance.timing.responseStart")
+    respE = driver.execute_script("return performance.timing.responseEnd")
+    dom = driver.execute_script("return performance.timing.domInteractive")
+    loadE = driver.execute_script("return performance.timing.loadEventEnd")
+    domCLoad = driver.execute_script("return performance.timing.domContentLoadedEventEnd")
+    print('core metrics collected')
+    if loadE > navS:
+	pgLoad = str(int(loadE-navS))
+	domI = str(int(dom-navS))
+	domCL = str(int(domCLoad-navS))
+	cont = str(int(respE-navS))
+	ttfb = str(int(respS-navS))
+    
+        print('\nperf details found\n')
+        l.append('sd.Selenium.'+base+'.'+titl+'.ttfb:'+ttfb+'|ms\n')
+        l.append('sd.Selenium.'+base+'.'+titl+'.pgl:'+pgLoad+'|ms\n')
+        l.append('sd.Selenium.'+base+'.'+titl+'.pgi:'+domI+'|ms\n')
+        l.append('sd.Selenium.'+base+'.'+titl+'.domcl:'+domCL+'|ms\n')
+        l.append('sd.Selenium.'+base+'.'+titl+'.html:'+cont+'|ms\n')
+        print(ttfb+'\t'+domCL+' '+base+' '+titl)
+    if (dtitl.find('Content') != 0):
 	try:
-		navS = driver.execute_script("return performance.timing.navigationStart")
-		# print('navS: '+str(navS))
-		respS = driver.execute_script("return performance.timing.responseStart")
-		respE = driver.execute_script("return performance.timing.responseEnd")
-		dom = driver.execute_script("return performance.timing.domInteractive")
-		loadE = driver.execute_script("return performance.timing.loadEventEnd")
-		domCLoad = driver.execute_script("return performance.timing.domContentLoadedEventEnd")
-		# domC = str(driver.execute_script("return document.getElementsByTagName('*').length"))
-		if (dtitl.find('Content_Delivery')>0):
-			pcrT=driver.execute_script("return prs.abs_end")
-		elif (dtitl.find('Category_Home')>0):
-			prs=driver.execute_script('return prs')
-			prsT=[]
-			prsT.append(prs['pcr'])
-			prsT.append(prs['pcr_nav'])
-			pcrT=sorted(prsT)[1]
-		else:
-			pcrT=driver.execute_script("return prs.pcr")
-		if loadE > navS:
-			pgLoad = str(int(loadE-navS))
-			domI = str(int(dom-navS))
-			domCL = str(int(domCLoad-navS))
-			cont = str(int(respE-navS))
-			ttfb = str(int(respS-navS))
-			pcr = str(int(pcrT-navS))
-			# print(titl +' '+str(pcr))
-			# print('\nperf details found\n')
-			l.append('sd.Selenium.'+base+'.'+titl+'.ttfb:'+ttfb+'|ms\n')
-			l.append('sd.Selenium.'+base+'.'+titl+'.pgl:'+pgLoad+'|ms\n')
-			l.append('sd.Selenium.'+base+'.'+titl+'.pgi:'+domI+'|ms\n')
-			l.append('sd.Selenium.'+base+'.'+titl+'.domcl:'+domCL+'|ms\n')
-			l.append('sd.Selenium.'+base+'.'+titl+'.html:'+cont+'|ms\n')
-			l.append('sd.Selenium.'+base+'.'+titl+'.pcr:'+pcr+'|ms\n')
-			# print l
-			print(ttfb+'\t'+domCL+'\t'+pcr+' '+base+' '+titl)
+	  print('try article PCR')
+	  #pcrT=driver.execute_script("return prs.abs_end")
+          prs=driver.execute_script('return prs')
+	  pcrT=prs['abs_end']
+          print(pcrT+' '+dtitl)
+        except:
+          print('could not get article PCR')
+          pass
+    elif (dtitl.find('Category_Home') != 0):
+	prs=driver.execute_script('return prs')
+	prsT=[]
+	prsT.append(prs['pcr'])
+	prsT.append(prs['pcr_nav'])
+	pcrT=sorted(prsT)[1]
+    else:
+	pcrT=driver.execute_script("return prs.pcr")
+    if pcr > navS:
+	pcr = str(int(pcrT-navS))
+        l.append('sd.Selenium.'+base+'.'+titl+'.pcr:'+pcr+'|ms\n')
+        print(ttfb+'\t'+domCL+'\t'+pcr+' '+base+' '+titl)
 
-	except:
-		pass
-	#
-	#
-	# End metricsCollect()
-	#
+  except:
+    print('something failed with metricsCollect')
+    pass
+
+#
+# End metricsCollect()
+#
 
 
 #=============================================================
@@ -396,7 +389,7 @@ while endTime > time.time():
 			# print 'join statsDdata'	
 			statsDdata=''.join(l)
 			# print('here is statsDdata')
-			# print(statsDdata)
+			print(statsDdata)
 			UDPSock.sendto(statsDdata,addr)
 			l=[]
 		loop = loop+1
