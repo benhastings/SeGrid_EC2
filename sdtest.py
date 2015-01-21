@@ -26,7 +26,8 @@ hub = sys.argv[3]
 instID = sys.argv[4]
 
 
-statsDHost='ec2-54-80-6-76.compute-1.amazonaws.com'
+#statsDHost='ec2-54-80-6-76.compute-1.amazonaws.com'
+statsDHost='statsd.elsst.com'
 """
   Define UDP connection to send data to statsD
 """
@@ -84,29 +85,36 @@ def egress():
 # Function to send error details for tracking
 #------------------------------------------------------
 def errorReport(hName,titlN,msg):
-	sendBack='http://cert-pa.elsevier.com/perfTest?perfTest.error.cpc=SD&perfTest.error.cpc.host='+hName+'&perfTest.error.cpc.host.page='+titl+'&perfTest.error.cpc.host.page.msg='+msg
+	#sendBack='http://cert-pa.elsevier.com/perfTest?perfTest.error.cpc=SD&perfTest.error.cpc.host='+hName+'&perfTest.error.cpc.host.page='+titl+'&perfTest.error.cpc.host.page.msg='+msg
 	l.append('sd.Selenium.error.'+base+'.'+titlN+':1|c\n')
+	try:
+	  print('error - '+msg+' '+titlN+' '+driver.title)
+	except:
+	  print('error - '+msg+' '+titlN)
 
+	"""
 	try:
 		url2Send = urllib2.urlopen(sendBack)        
-		print('error url sent')
+		print('error url sent: '+msg)
 	except:
-		print('error url NOT sent')
+		print('error url NOT sent: '+msg)
 		pass
-	
+	"""
 #------------------------------------------------------
 # Function to send error details for tracking
 #------------------------------------------------------
 def newBrowser(base):
 	# sendBack='http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.'+base+'.newBrowser=1&perfTest.cpc.'+base+'.id='+instID
 	l.append('sd.Selenium.'+base+'.newBrowser:1|c\n')
+	print('new Browser - '+base)
+	"""
 	try:
 		url2Send = urllib2.urlopen(sendBack)        
-		print('error url sent')
+		print('new Browser notification sent')
 	except:
-		print('error url NOT sent')
+		print('new Browser NOT sent')
 		pass
-
+	"""
 
 #------------------------------------------------------
 #       Function to execute a request or page interaction
@@ -191,7 +199,7 @@ def metricsCollect(dtitl):
 			l.append('sd.Selenium.'+base+'.'+titl+'.html:'+cont+'|ms\n')
 			l.append('sd.Selenium.'+base+'.'+titl+'.pcr:'+pcr+'|ms\n')
 			# print l
-
+			print(ttfb+'\t'+domCL+'\t'+pcr+' '+base+' '+titl)
 
 	except:
 		pass
@@ -313,7 +321,7 @@ while endTime > time.time():
 				titl = 'Content_Delivery'
 				#sStart = time.time()
 				try:
-					# print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
+					print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
 					getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
 				except urllib2.URLError:
 					time.sleep(.25)	
@@ -321,7 +329,7 @@ while endTime > time.time():
 				
 				try:
 					dtitl=driver.title[:50]
-					# print(dtitl[:50])
+					print(dtitl[:50])
 				except:
 					egress()
 					exit
@@ -405,6 +413,6 @@ while endTime > time.time():
 		# print time.time()
 		# print titl
 		errorReport(base,titl,'Start Browser Fail')
-		print(statsDdata)
+		#print(statsDdata)
 		time.sleep(5)
 		pass

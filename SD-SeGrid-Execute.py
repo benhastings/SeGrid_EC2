@@ -50,14 +50,15 @@ def freeCheck():
 freeCount=0
 freeCount=freeCheck()
 #print 'freeCount before loop:'+str(freeCount)
-while freeCount>3:
+while freeCount>2:
 	#print 'I have entered the loop'
-        ex=Popen('python gridExecute.py 4 0 sdtest.py 400 '+PHOST+' '+instID+'&',shell=True,close_fds=True)
+        #ex=Popen('python gridExecute.py 4 0 sdtest.py 400 '+PHOST+' '+instID+'&',shell=True,close_fds=True)
+        ex=Popen('python sdtest.py 21600 chrome '+PHOST+' '+instID+'&',shell=True,close_fds=True)
 	exOut=ex.communicate()
 	print(exOut)
 	try:
 		#print 'I am trying to start more tests'
-		url2Send = urllib2.urlopen('http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.newScripts=2')        
+		#url2Send = urllib2.urlopen('http://cert-pa.elsevier.com/perfTest?perfTest.cpc=SD&perfTest.cpc.newScripts=2')        
         	time.sleep(10)
         	try:
 	                freeCount=freeCheck()
