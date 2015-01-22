@@ -1,7 +1,7 @@
 from selenium import webdriver
 import selenium.webdriver.support.ui as ui
 from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
+#from selenium.webdriver.common.action_chains import ActionChains
 import time
 import datetime
 import csv
@@ -10,6 +10,7 @@ import sys
 import urllib2
 import socket
 
+from metricsCollect import metricsCollect
 
 #------------------------------------------------------------
 #--- Get Interactive Input for number of loops to execute ---
@@ -85,7 +86,9 @@ def egress():
 # Function to send error details for tracking
 #------------------------------------------------------
 def errorReport(hName,titlN,msg):
-	l.append('sd.Selenium.error.'+base+'.'+titlN+':1|c\n')
+	# l.append('sd.Selenium.error.'+base+'.'+titlN+':1|c\n')
+	stats+='sd.Selenium.error.'+base+'.'+titlN+':1|c\n'
+
 	try:
 	  print('error - '+msg+' '+titlN+' '+driver.title)
 	except:
@@ -95,7 +98,9 @@ def errorReport(hName,titlN,msg):
 # Function to send error details for tracking
 #------------------------------------------------------
 def newBrowser(base):
-	l.append('sd.Selenium.'+base+'.newBrowser:1|c\n')
+	# l.append('sd.Selenium.'+base+'.newBrowser:1|c\n')
+	stats+='sd.Selenium.'+base+'.newBrowser:1|c\n'
+
 	print('new Browser - '+base)
 
 #------------------------------------------------------
@@ -125,10 +130,10 @@ def getPage(resource):
 			exit
 		else:
 			# l.append('sd.Selenium.'+base+'.'+titl+'.pass:1|c\n')
-			metricsCollect(titl)
-						
 			time.sleep(.25)
-
+			metrics=metricsCollect(titl,driver,base)
+			stats+=metrics			
+			
 	except urllib2.URLError:
 		# print 'URLError'
 		errorReport(base,titl,'URLError')
@@ -137,69 +142,6 @@ def getPage(resource):
 		# print (titl+' fail')
 		errorReport(base,titl,'Other')
 		pass
-
-
-#-------------------------------------------------------
-#       Function to capture various page timing metrics
-#               and output to screen for log tailing and troubleshooting
-#---------------
-
-#def metricsCollect(dtitl,PII,sections):
-def metricsCollect(dtitl):
-  print(dtitl+' - trying metricsCollect')
-  try:
-    navS = driver.execute_script("return performance.timing.navigationStart")
-    print('navS: '+str(navS)+' '+dtitl)
-    respS = driver.execute_script("return performance.timing.responseStart")
-    respE = driver.execute_script("return performance.timing.responseEnd")
-    dom = driver.execute_script("return performance.timing.domInteractive")
-    loadE = driver.execute_script("return performance.timing.loadEventEnd")
-    domCLoad = driver.execute_script("return performance.timing.domContentLoadedEventEnd")
-    print('core metrics collected')
-    if loadE > navS:
-	pgLoad = str(int(loadE-navS))
-	domI = str(int(dom-navS))
-	domCL = str(int(domCLoad-navS))
-	cont = str(int(respE-navS))
-	ttfb = str(int(respS-navS))
-    
-        print('\nperf details found\n')
-        l.append('sd.Selenium.'+base+'.'+titl+'.ttfb:'+ttfb+'|ms\n')
-        l.append('sd.Selenium.'+base+'.'+titl+'.pgl:'+pgLoad+'|ms\n')
-        l.append('sd.Selenium.'+base+'.'+titl+'.pgi:'+domI+'|ms\n')
-        l.append('sd.Selenium.'+base+'.'+titl+'.domcl:'+domCL+'|ms\n')
-        l.append('sd.Selenium.'+base+'.'+titl+'.html:'+cont+'|ms\n')
-        print(ttfb+'\t'+domCL+' '+base+' '+titl)
-    if (dtitl.find('Content') != 0):
-	try:
-	  print('try article PCR')
-	  #pcrT=driver.execute_script("return prs.abs_end")
-          prs=driver.execute_script('return prs')
-	  pcrT=prs['abs_end']
-          print(pcrT+' '+dtitl)
-        except:
-          print('could not get article PCR')
-          pass
-    elif (dtitl.find('Category_Home') != 0):
-	prs=driver.execute_script('return prs')
-	prsT=[]
-	prsT.append(prs['pcr'])
-	prsT.append(prs['pcr_nav'])
-	pcrT=sorted(prsT)[1]
-    else:
-	pcrT=driver.execute_script("return prs.pcr")
-    if pcr > navS:
-	pcr = str(int(pcrT-navS))
-        l.append('sd.Selenium.'+base+'.'+titl+'.pcr:'+pcr+'|ms\n')
-        print(ttfb+'\t'+domCL+'\t'+pcr+' '+base+' '+titl)
-
-  except:
-    print('something failed with metricsCollect')
-    pass
-
-#
-# End metricsCollect()
-#
 
 
 #=============================================================
@@ -217,6 +159,7 @@ while endTime > time.time():
 	"""
 	
 	try:
+		stats=''
 		# print('loading browser')
 		driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
 		#driver=webdriver.Chrome()
@@ -225,22 +168,23 @@ while endTime > time.time():
 		time.sleep(.25)
 	
 		# Initialize array for holding metrics to send to graphite
-		l = []
+		# l = []
+		
 
 		#-------------------------------------------------
 		#       Define baseURL for following transactions
 		#-------------------------------------------------
 		baseIDX=int(random.random()*300)
 		
-		if (baseIDX%3==0):
+		if (baseIDX%2==0):
 			baseURL = 'cdc311-www.sciencedirect.com'
 			base='cdc311'
-		if (baseIDX%3==1):
+		if (baseIDX%2==1):
 			baseURL = 'cdc314-www.sciencedirect.com'
 			base='cdc314'
-		if (baseIDX%3==2):
-			baseURL = 'cdc318-www.sciencedirect.com'
-			base='cdc318'
+		# if (baseIDX%3==2):
+		# 	baseURL = 'cdc318-www.sciencedirect.com'
+		# 	base='cdc318'
 
 		# baseURL = 'cdc314-www.sciencedirect.com'
 		# base='cdc314'
@@ -387,20 +331,22 @@ while endTime > time.time():
 			# print(browserLoop)
 		
 			# print 'join statsDdata'	
-			statsDdata=''.join(l)
+			# statsDdata=''.join(l)
 			# print('here is statsDdata')
-			print(statsDdata)
-			UDPSock.sendto(statsDdata,addr)
-			l=[]
+			print(stats)
+			#UDPSock.sendto(statsDdata,addr)
+			# l=[]
+			stats=''
 		loop = loop+1
 		idx=idx+1
 		egress()
 	except:
-		if(len(l) > 0):
-			statsDdata=''.join(l)
+		if(len(stats) > 0):
+			#statsDdata=''.join(l)
 			# print('here is statsDdata')
-			# print(statsDdata)
-			UDPSock.sendto(statsDdata,addr)
+			print(stats)
+			
+			#UDPSock.sendto(statsDdata,addr)
 
 		# print('loading browser failed')
 		# print time.time()
