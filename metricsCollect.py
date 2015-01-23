@@ -1,5 +1,4 @@
 def metricsCollect(dtitl,d,base):
-	if (d.current_url.find('sciencedirect') > -1 OR d.current_url.find('scopus') > -1):
 		l=''
 		# print(dtitl+' - trying metricsCollect')
 		try:
@@ -55,11 +54,5 @@ def metricsCollect(dtitl,d,base):
 				if pcrT > navS:
 					pcr = str(int(pcrT-navS))
 					l+='sd.Selenium.'+base+'.'+dtitl+'.pcr:'+pcr+'|ms\n'
-					# print(ttfb+'\t'+domCL+'\t'+pcr+' '+base+' '+dtitl)
-				return l
 
-		except:
-			# print('something failed with metricsCollect')
-			l+='whatFailed?'
-			# print l	
-			return l
+                return l

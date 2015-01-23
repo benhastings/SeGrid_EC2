@@ -10,8 +10,10 @@ import sys
 import urllib2
 import socket
 
-from metricsCollect import metricsCollect
-
+try:
+    from metricsCollect import metricsCollect
+except:
+    pass
 #------------------------------------------------------------
 #--- Get Interactive Input for number of loops to execute ---
 #numLoops = int(sys.argv[1])
@@ -119,7 +121,7 @@ def getPage(resource):
 			exit
 		elif 'ScienceDirect Error' in driver.title:
 			dt = datetime.datetime.now()
-                	dTm = str(dt.strftime("%Y/%m/%d %H:%M:%S%Z"))
+			dTm = str(dt.strftime("%Y/%m/%d %H:%M:%S%Z"))
 			# print 'SD-00x Error'+dTm
 			errorReport(base,titl,'SD-00x')
 			time.sleep(1)
@@ -131,9 +133,13 @@ def getPage(resource):
 		else:
 			# l.append('sd.Selenium.'+base+'.'+titl+'.pass:1|c\n')
 			time.sleep(.25)
-			metrics=metricsCollect(titl,driver,base)
-			stats+=metrics			
-			
+			print('trying metrics capture')
+			try:
+			  metrics=metricsCollect(titl,driver,base)
+			  stats+=metrics			
+			except:
+ 			  print('metricsCollect failed')
+			  pass
 	except urllib2.URLError:
 		# print 'URLError'
 		errorReport(base,titl,'URLError')
@@ -149,7 +155,7 @@ def getPage(resource):
 #       Script Begins Here
 #-------------------------------------------------------------
 #=============================================================
-
+stats=''
 #--- Define static Article Value for looping
 idx=0
 while endTime > time.time():
@@ -160,7 +166,7 @@ while endTime > time.time():
 	
 	try:
 		stats=''
-		# print('loading browser')
+		print('loading browser')
 		driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
 		#driver=webdriver.Chrome()
 		# print('wait for it...')	
@@ -351,6 +357,7 @@ while endTime > time.time():
 		# print('loading browser failed')
 		# print time.time()
 		# print titl
+		base='all'
 		errorReport(base,titl,'Start Browser Fail')
 		#print(statsDdata)
 		time.sleep(5)
