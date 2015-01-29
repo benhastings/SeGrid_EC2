@@ -13,6 +13,7 @@ import socket
 try:
     from metricsCollect import metricsCollect
 except:
+    print ('failed importing metricsCollect')
     pass
 #------------------------------------------------------------
 #--- Get Interactive Input for number of loops to execute ---
@@ -182,15 +183,15 @@ while endTime > time.time():
 		#-------------------------------------------------
 		baseIDX=int(random.random()*300)
 		
-		if (baseIDX%2==0):
+		if (baseIDX%3==0):
 			baseURL = 'cdc311-www.sciencedirect.com'
 			base='cdc311'
-		if (baseIDX%2==1):
+		if (baseIDX%3==1):
 			baseURL = 'cdc314-www.sciencedirect.com'
 			base='cdc314'
-		# if (baseIDX%3==2):
-		# 	baseURL = 'cdc318-www.sciencedirect.com'
-		# 	base='cdc318'
+		if (baseIDX%3==2):
+		 	baseURL = 'cdc318-www.sciencedirect.com'
+		 	base='cdc318'
 
 		# baseURL = 'cdc314-www.sciencedirect.com'
 		# base='cdc314'
