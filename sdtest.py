@@ -250,8 +250,8 @@ while endTime > time.time():
 			baseURL = 'cdc318-www.sciencedirect.com'
 			base='cdc318'
 
-		baseURL = 'cdc311-www.sciencedirect.com'
-		base='cdc311'
+		# baseURL = 'cdc311-www.sciencedirect.com'
+		# base='cdc311'
 
 		try:
 			newBrowser(base)
@@ -322,7 +322,7 @@ while endTime > time.time():
 				titl = 'Content_Delivery'
 				#sStart = time.time()
 				try:
-					print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
+					#print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
 					getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
 				except urllib2.URLError:
 					time.sleep(.25)	
@@ -394,9 +394,9 @@ while endTime > time.time():
 			browserLoop=browserLoop-1
 			# print(browserLoop)
 		
-			print 'join statsDdata'	
+			# print 'join statsDdata'	
 			statsDdata=''.join(l)
-			print('here is statsDdata')
+			# print('here is statsDdata')
 			print(statsDdata)
 			try:
 				print('try to send UDP message')
