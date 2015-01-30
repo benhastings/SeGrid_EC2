@@ -86,12 +86,7 @@ def egress():
 # Function to send error details for tracking
 #------------------------------------------------------
 def errorReport(hName,titlN,msg):
-	# l.append('sd.Selenium.error.'+base+'.'+titlN+':1|c\n')
-	try:
-	 	stats
-		stats+='sd.Selenium.error.'+base+'.'+titlN+':1|c\n'
-	except:
-		stats='sd.Selenium.error.'+base+'.'+titlN+':1|c\n'
+	l.append('sd.Selenium.error.'+base+'.'+titlN+':1|c\n')
 	try:
 	  print('error - '+msg+' '+titlN+' '+driver.title)
 	except:
@@ -123,35 +118,49 @@ def metricsCollect(dtitl,d,base):
 			compVal=int(d.execute_script('return performance.timing.'+metrics[i])-navS)
 			if(compVal>0):
 				l.append('sd.Selenium.'+base+'.'+dtitl+'.'+str(i)+':'+str(compVal)+'|ms\n')
+		
+		try:
+			prsT=[]
+			prs=d.execute_script('return prs')
+			try:
+				prsT.append(prs['pcr'])
+			except:
+				pass
+			try:
+				prsT.append(prs['pcr_nav'])
+			except:
+				pass
+			try:
+				prsT.append(prs['abs_end'])
+			except:
+				pass
+			pcrT=sorted(prsT)[len(prsT)-1]
+		except:
+			pcrT=0
+		"""
 		if (dtitl.find('Content_Delivery') != -1):
 			try:
 				# print('try return prs.abs_end')
 				pcrT=d.execute_script("return prs.abs_end")
 			except:
 				pcrT=0
-		elif(dtitl.find('Category_Home') != -1):
-			try:
-				prs=d.execute_script('return prs')
-				prsT=[]
-				prsT.append(prs['pcr'])
-				prsT.append(prs['pcr_nav'])
-				pcrT=sorted(prsT)[1]
-			except:
-				pcrT=0
 		else:
 			# print('found a different page! - '+dtitl)
 			try:
-				pcrT=execute_script("return prs['pcr']")
-			except:
+				prs=execute_script('return prs')
+				prsT=[]
+				prsT.append(prs['pcr'])
 				try:
-					prs=execute_script('return prs')
-					pcrT=prs['pcr']
+					prsT.append(prs['pcr_nav'])
 				except:
-					pcrT=0
+					pass
+				pcrT=sorted(prsT)[len(prsT)-1]
+			except:
+				pcrT=0
+		"""
 		if pcrT > navS:
 			l.append('sd.Selenium.'+base+'.'+dtitl+'.pcr:'+str(int(pcrT-navS))+'|ms\n')
 		# print l
-		# print UDPSock.sendto(mets,addr)
 		# print('l '+l)
 	except:
 		# print('scripts no workie')
@@ -391,13 +400,27 @@ while endTime > time.time():
 					artLoop = artLoop-1
 					idx = idx+1
 	
+				# print 'join statsDdata'	
+				statsDdata=''.join(l)
+				# print('here is statsDdata')
+				print(statsDdata)
+				try:
+					print('try to send UDP message')
+					print UDPSock.sendto(statsDdata,addr)
+				
+				except:
+					print('UDP send failed')
+					pass
+				l=[]
+			
 			browserLoop=browserLoop-1
 			# print(browserLoop)
 		
+			"""
 			# print 'join statsDdata'	
 			statsDdata=''.join(l)
 			# print('here is statsDdata')
-			print(statsDdata)
+			# print(statsDdata)
 			try:
 				print('try to send UDP message')
 				print UDPSock.sendto(statsDdata,addr)
@@ -406,6 +429,7 @@ while endTime > time.time():
 				print('UDP send failed')
 				pass
 			l=[]
+			"""
 		loop = loop+1
 		idx=idx+1
 		egress()
