@@ -1,58 +1,47 @@
 def metricsCollect(dtitl,d,base):
-		l=''
-		# print(dtitl+' - trying metricsCollect')
-		try:
-			# print('try some script execute')
+	l=''
+	# metrics=['responseStart','responseEnd','domInteractive','loadEventEnd','domContentLoadedEventEnd']
+	metrics={'ttfb':'responseStart','html':'responseEnd','pgi':'domInteractive','pgl':'loadEventEnd','startRender':'domContentLoadedEventEnd'}
+	# print(dtitl+' - trying metricsCollect')
+	try:
+		# print('try some script execute')
+		navS = d.execute_script('return performance.timing.navigationStart')
+		# print('navS: '+str(navS))
+		# print('try getting other metrics')
+		for i in metrics:
+			compVal=int(d.execute_script('return performance.timing.'+metrics[i])-navS)
+			if(compVal>0):
+				l+='sd.Selenium.'+base+'.'+dtitl+'.'+str(i)+':'+str()+'|ms\n'
+		if (dtitl.find('Content_Delivery') != -1):
+			try:
+				# print('try return prs.abs_end')
+				pcrT=d.execute_script("return prs.abs_end")
+			except:
+				pcrT=0
+		elif(dtitl.find('Category_Home') != -1):
+			try:
+				prs=d.execute_script('return prs')
+				prsT=[]
+				prsT.append(prs['pcr'])
+				prsT.append(prs['pcr_nav'])
+				pcrT=sorted(prsT)[1]
+			except:
+				pcrT=0
+		else:
+			# print('found a different page! - '+dtitl)
+			try:
+				pcrT=execute_script("return prs['pcr']")
+			except:
+				try:
+					prs=execute_script('return prs')
+					pcrT=prs['pcr']
+				except:
+					pcrT=0
+		if pcrT > navS:
+			l+='sd.Selenium.'+base+'.'+dtitl+'.pcr:'+str(int(pcrT-navS))+'|ms\n'
 
-			navS = d.execute_script("return performance.timing.navigationStart")
-			# print('navS: '+str(navS)+' '+dtitl)
-			respS = d.execute_script("return performance.timing.responseStart")
-			respE = d.execute_script("return performance.timing.responseEnd")
-			dom = d.execute_script("return performance.timing.domInteractive")
-			loadE = d.execute_script("return performance.timing.loadEventEnd")
-			domCLoad = d.execute_script("return performance.timing.domContentLoadedEventEnd")
-			# print('core metrics collected')
-			if loadE > navS:
-				pgLoad = str(int(loadE-navS))
-				domI = str(int(dom-navS))
-				domCL = str(int(domCLoad-navS))
-				cont = str(int(respE-navS))
-				ttfb = str(int(respS-navS))
-
-				# print('\nperf details found\n')
-				l+='sd.Selenium.'+base+'.'+dtitl+'.ttfb:'+ttfb+'|ms\n'
-				l+='sd.Selenium.'+base+'.'+dtitl+'.pgl:'+pgLoad+'|ms\n'
-				l+='sd.Selenium.'+base+'.'+dtitl+'.pgi:'+domI+'|ms\n'
-				l+='sd.Selenium.'+base+'.'+dtitl+'.domcl:'+domCL+'|ms\n'
-				l+='sd.Selenium.'+base+'.'+dtitl+'.html:'+cont+'|ms\n'
-				# print(ttfb+'\t'+domCL+' '+base+' '+dtitl)
-			
-				if (dtitl.find('Content') != -1):
-					try:
-						# print('try article PCR')
-						try:
-							# print('try return prs.abs_end')
-							pcrT=d.execute_script("return prs.abs_end")
-						except:
-							# print("try return prs['abs_end']")
-							pcrT=d.execute_script("return prs['abs_end']")
-						# prs=d.execute_script('return prs')
-						# pcrT=prs['abs_end']
-						
-					except:
-						pcrT=0
-						# print('could not get article PCR')
-						pass
-				elif (dtitl.find('Category_Home') != -1):
-					prs=d.execute_script('return prs')
-					prsT=[]
-					prsT.append(prs['pcr'])
-					prsT.append(prs['pcr_nav'])
-					pcrT=sorted(prsT)[1]
-				else:
-					pcrT=d.execute_script("return prs.pcr")
-				if pcrT > navS:
-					pcr = str(int(pcrT-navS))
-					l+='sd.Selenium.'+base+'.'+dtitl+'.pcr:'+pcr+'|ms\n'
-
-                return l
+		# print('l '+l)
+	except:
+		# print('scripts no workie')
+		pass
+	return l

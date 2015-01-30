@@ -10,11 +10,8 @@ import sys
 import urllib2
 import socket
 
-try:
-    from metricsCollect import metricsCollect
-except:
-    print ('failed importing metricsCollect')
-    pass
+from metricsCollect import metricsCollect
+
 #------------------------------------------------------------
 #--- Get Interactive Input for number of loops to execute ---
 #numLoops = int(sys.argv[1])
@@ -29,7 +26,7 @@ hub = sys.argv[3]
 
 instID = sys.argv[4]
 
-
+stats=''
 #statsDHost='ec2-54-80-6-76.compute-1.amazonaws.com'
 statsDHost='statsd.elsst.com'
 """
@@ -90,8 +87,11 @@ def egress():
 #------------------------------------------------------
 def errorReport(hName,titlN,msg):
 	# l.append('sd.Selenium.error.'+base+'.'+titlN+':1|c\n')
-	stats+='sd.Selenium.error.'+base+'.'+titlN+':1|c\n'
-
+	try:
+	 	stats
+		stats+='sd.Selenium.error.'+base+'.'+titlN+':1|c\n'
+	except:
+		stats='sd.Selenium.error.'+base+'.'+titlN+':1|c\n'
 	try:
 	  print('error - '+msg+' '+titlN+' '+driver.title)
 	except:
@@ -122,7 +122,7 @@ def getPage(resource):
 			exit
 		elif 'ScienceDirect Error' in driver.title:
 			dt = datetime.datetime.now()
-			dTm = str(dt.strftime("%Y/%m/%d %H:%M:%S%Z"))
+                	dTm = str(dt.strftime("%Y/%m/%d %H:%M:%S%Z"))
 			# print 'SD-00x Error'+dTm
 			errorReport(base,titl,'SD-00x')
 			time.sleep(1)
@@ -133,14 +133,20 @@ def getPage(resource):
 			exit
 		else:
 			# l.append('sd.Selenium.'+base+'.'+titl+'.pass:1|c\n')
-			time.sleep(.25)
-			print('trying metrics capture')
+			time.sleep(.5)
+			# print('trying metricsCollect')
 			try:
-			  metrics=metricsCollect(titl,driver,base)
-			  stats+=metrics			
+				# print('try to append to stats')
+				testHolder=metricsCollect(titl,driver,base)
+				UDPSock.sendto(testHolder,addr)
+				# print(testHolder)
+				# stats +=''.join(testHolder)
+				# print(stats)
 			except:
- 			  print('metricsCollect failed')
-			  pass
+				# print('no append to stats, create instead')
+				# stats=''.join(metricsCollect(titl,driver,base))			
+				pass
+				
 	except urllib2.URLError:
 		# print 'URLError'
 		errorReport(base,titl,'URLError')
@@ -156,7 +162,6 @@ def getPage(resource):
 #       Script Begins Here
 #-------------------------------------------------------------
 #=============================================================
-stats=''
 #--- Define static Article Value for looping
 idx=0
 while endTime > time.time():
@@ -166,8 +171,8 @@ while endTime > time.time():
 	"""
 	
 	try:
-		stats=''
-		print('loading browser')
+		# stats=''
+		# print('loading browser')
 		driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
 		#driver=webdriver.Chrome()
 		# print('wait for it...')	
@@ -183,15 +188,15 @@ while endTime > time.time():
 		#-------------------------------------------------
 		baseIDX=int(random.random()*300)
 		
-		if (baseIDX%3==0):
+		if (baseIDX%2==0):
 			baseURL = 'cdc311-www.sciencedirect.com'
 			base='cdc311'
-		if (baseIDX%3==1):
+		if (baseIDX%2==1):
 			baseURL = 'cdc314-www.sciencedirect.com'
 			base='cdc314'
-		if (baseIDX%3==2):
-		 	baseURL = 'cdc318-www.sciencedirect.com'
-		 	base='cdc318'
+		# if (baseIDX%3==2):
+		# 	baseURL = 'cdc318-www.sciencedirect.com'
+		# 	base='cdc318'
 
 		# baseURL = 'cdc314-www.sciencedirect.com'
 		# base='cdc314'
@@ -265,7 +270,7 @@ while endTime > time.time():
 				titl = 'Content_Delivery'
 				#sStart = time.time()
 				try:
-					print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
+					#print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
 					getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
 				except urllib2.URLError:
 					time.sleep(.25)	
@@ -273,7 +278,7 @@ while endTime > time.time():
 				
 				try:
 					dtitl=driver.title[:50]
-					print(dtitl[:50])
+					#print(dtitl[:50])
 				except:
 					egress()
 					exit
@@ -348,18 +353,11 @@ while endTime > time.time():
 		idx=idx+1
 		egress()
 	except:
-		if(len(stats) > 0):
-			#statsDdata=''.join(l)
-			# print('here is statsDdata')
-			print(stats)
-			
-			#UDPSock.sendto(statsDdata,addr)
-
 		# print('loading browser failed')
 		# print time.time()
 		# print titl
-		base='all'
 		errorReport(base,titl,'Start Browser Fail')
 		#print(statsDdata)
 		time.sleep(5)
 		pass
+
