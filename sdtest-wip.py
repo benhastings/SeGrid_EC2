@@ -122,7 +122,7 @@ def metricsCollect(dtitl,d,base):
 		for i in metrics:
 			compVal=int(d.execute_script('return performance.timing.'+metrics[i])-navS)
 			if(compVal>0):
-				l.append('sd.Selenium.'+base+'.'+dtitl+'.'+str(i)+':'+str()+'|ms\n')
+				l.append('sd.Selenium.'+base+'.'+dtitl+'.'+str(i)+':'+str(compVal)+'|ms\n')
 		if (dtitl.find('Content_Delivery') != -1):
 			try:
 				# print('try return prs.abs_end')
@@ -294,7 +294,7 @@ while endTime > time.time():
 		#-------------------------------------------------
 		#      Add looping structure to minimize browser churn
 		#-------------------------------------------------
-		browserLoop=4				
+		browserLoop=2				
 		while(browserLoop > 0):
 			#-------------------------------------------------
 			#       View Article(s) with scrolling where possible
@@ -330,7 +330,7 @@ while endTime > time.time():
 				
 				try:
 					dtitl=driver.title[:50]
-					print(dtitl[:50])
+					# print(dtitl[:50])
 				except:
 					egress()
 					exit
@@ -400,7 +400,8 @@ while endTime > time.time():
 			print(statsDdata)
 			try:
 				print('try to send UDP message')
-				UDPSock.sendto(statsDdata,addr)
+				print UDPSock.sendto(statsDdata,addr)
+				
 			except:
 				print('UDP send failed')
 				pass

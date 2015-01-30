@@ -10,7 +10,7 @@ import sys
 import urllib2
 import socket
 
-from metricsCollect import metricsCollect
+#from metricsCollect import metricsCollect
 
 #------------------------------------------------------------
 #--- Get Interactive Input for number of loops to execute ---
@@ -26,7 +26,7 @@ hub = sys.argv[3]
 
 instID = sys.argv[4]
 
-stats=''
+l=[]
 #statsDHost='ec2-54-80-6-76.compute-1.amazonaws.com'
 statsDHost='statsd.elsst.com'
 """
@@ -107,6 +107,58 @@ def newBrowser(base):
 	print('new Browser - '+base)
 
 #------------------------------------------------------
+# Gather Performance data to send
+#------------------------------------------------------
+def metricsCollect(dtitl,d,base):
+	# mets=''
+	# metrics=['responseStart','responseEnd','domInteractive','loadEventEnd','domContentLoadedEventEnd']
+	metrics={'ttfb':'responseStart','html':'responseEnd','pgi':'domInteractive','pgl':'loadEventEnd','startRender':'domContentLoadedEventEnd'}
+	# print(dtitl+' - trying metricsCollect')
+	try:
+		# print('try some script execute')
+		navS = d.execute_script('return performance.timing.navigationStart')
+		# print('navS: '+str(navS))
+		# print('try getting other metrics')
+		for i in metrics:
+			compVal=int(d.execute_script('return performance.timing.'+metrics[i])-navS)
+			if(compVal>0):
+				l.append('sd.Selenium.'+base+'.'+dtitl+'.'+str(i)+':'+str(compVal)+'|ms\n')
+		if (dtitl.find('Content_Delivery') != -1):
+			try:
+				# print('try return prs.abs_end')
+				pcrT=d.execute_script("return prs.abs_end")
+			except:
+				pcrT=0
+		elif(dtitl.find('Category_Home') != -1):
+			try:
+				prs=d.execute_script('return prs')
+				prsT=[]
+				prsT.append(prs['pcr'])
+				prsT.append(prs['pcr_nav'])
+				pcrT=sorted(prsT)[1]
+			except:
+				pcrT=0
+		else:
+			# print('found a different page! - '+dtitl)
+			try:
+				pcrT=execute_script("return prs['pcr']")
+			except:
+				try:
+					prs=execute_script('return prs')
+					pcrT=prs['pcr']
+				except:
+					pcrT=0
+		if pcrT > navS:
+			l.append('sd.Selenium.'+base+'.'+dtitl+'.pcr:'+str(int(pcrT-navS))+'|ms\n')
+		# print l
+		# print UDPSock.sendto(mets,addr)
+		# print('l '+l)
+	except:
+		# print('scripts no workie')
+		pass
+	return l
+
+#------------------------------------------------------
 #       Function to execute a request or page interaction
 #               handles associated error conditions
 #               Makes call to collect page timing
@@ -137,8 +189,8 @@ def getPage(resource):
 			# print('trying metricsCollect')
 			try:
 				# print('try to append to stats')
-				testHolder=metricsCollect(titl,driver,base)
-				UDPSock.sendto(testHolder,addr)
+				metricsCollect(titl,driver,base)
+				
 				# print(testHolder)
 				# stats +=''.join(testHolder)
 				# print(stats)
@@ -195,11 +247,11 @@ while endTime > time.time():
 			baseURL = 'cdc314-www.sciencedirect.com'
 			base='cdc314'
 		if (baseIDX%3==2):
-		 	baseURL = 'cdc318-www.sciencedirect.com'
-		 	base='cdc318'
+			baseURL = 'cdc318-www.sciencedirect.com'
+			base='cdc318'
 
-		# baseURL = 'cdc314-www.sciencedirect.com'
-		# base='cdc314'
+		baseURL = 'cdc311-www.sciencedirect.com'
+		base='cdc311'
 
 		try:
 			newBrowser(base)
@@ -242,7 +294,7 @@ while endTime > time.time():
 		#-------------------------------------------------
 		#      Add looping structure to minimize browser churn
 		#-------------------------------------------------
-		browserLoop=4				
+		browserLoop=2				
 		while(browserLoop > 0):
 			#-------------------------------------------------
 			#       View Article(s) with scrolling where possible
@@ -270,7 +322,7 @@ while endTime > time.time():
 				titl = 'Content_Delivery'
 				#sStart = time.time()
 				try:
-					#print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
+					print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
 					getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
 				except urllib2.URLError:
 					time.sleep(.25)	
@@ -278,7 +330,7 @@ while endTime > time.time():
 				
 				try:
 					dtitl=driver.title[:50]
-					#print(dtitl[:50])
+					# print(dtitl[:50])
 				except:
 					egress()
 					exit
@@ -342,13 +394,18 @@ while endTime > time.time():
 			browserLoop=browserLoop-1
 			# print(browserLoop)
 		
-			# print 'join statsDdata'	
-			# statsDdata=''.join(l)
-			# print('here is statsDdata')
-			print(stats)
-			#UDPSock.sendto(statsDdata,addr)
-			# l=[]
-			stats=''
+			print 'join statsDdata'	
+			statsDdata=''.join(l)
+			print('here is statsDdata')
+			print(statsDdata)
+			try:
+				print('try to send UDP message')
+				print UDPSock.sendto(statsDdata,addr)
+				
+			except:
+				print('UDP send failed')
+				pass
+			l=[]
 		loop = loop+1
 		idx=idx+1
 		egress()
