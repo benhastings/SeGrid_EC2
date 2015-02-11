@@ -259,8 +259,8 @@ while endTime > time.time():
 			baseURL = 'cdc318-www.sciencedirect.com'
 			base='cdc318'
 
-		# baseURL = 'cdc311-www.sciencedirect.com'
-		# base='cdc311'
+		baseURL = 'cdc318-www.sciencedirect.com'
+		base='cdc318'
 
 		try:
 			newBrowser(base)
