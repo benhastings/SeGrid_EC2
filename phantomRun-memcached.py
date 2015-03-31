@@ -10,7 +10,7 @@ import socket
 env=sys.argv[1]
 duration=int(sys.argv[2])
 #statsDHost='ec2-54-80-6-76.compute-1.amazonaws.com'
-statsDHost='graphite.elsst.com'
+statsDHost='statsd.elsst.com'
 
 """
   Input Data collection/Definition
@@ -52,7 +52,7 @@ elif env.find('cdc')> -1:
 else:
   envPrint='prod'
 
-print envPrint
+#print envPrint
 
 #while loops>0:
 while endTime > int(time.time()):
@@ -68,7 +68,7 @@ while endTime > int(time.time()):
 	inputPII3=str(PII[idxPii+3]).strip('[\']')
 	inputPII4=str(PII[idxPii+4]).strip('[\']')
 	#inputPII='S0008874905000535'
-	print(inputPII0+' '+inputPII1+' '+inputPII2)
+	#print(inputPII0+' '+inputPII1+' '+inputPII2)
 	#print 'I am trying the phantomJS request now'
 	#ex=Popen('phantomjs article.js '+hostNm+' '+inputPII+' '+renderArticles,stdout=PIPE)#,close_fds=True,shell=True)
 	count='sd.article.phantom.'+envPrint+'.total:5|c'
@@ -77,33 +77,10 @@ while endTime > int(time.time()):
 	ex=Popen(['phantomjs', 'articleCrawl.js',env,inputPII0,inputPII1,inputPII2,inputPII3,inputPII4],stdout=PIPE)#,close_fds=True,shell=True)
 	exOut=ex.communicate()
 	#print('ex.communicate below:')
-	print(exOut)
+	#print(exOut)
 	#print(exOut[0])
 	#print(inputPII)
 	
-	"""
-	try:
-		#print('find duration')
-		exS=exOut[0].split(' ')
-		lt=exS[0].split(':')[1]
-		tt=exS[1].split(':')[1]		
-		#print tt[0:tt.index('ms')]
-		#print lt[0:lt.index('ms')]
-
-		msTtlb= tt[0:tt.index('ms')]
-		msLoad=lt[0:lt.index('ms')]
-		
-		l.append('sd.article.phantom.'+envPrint+'.load:'+msLoad+'|ms\n')
-		l.append('sd.article.phantom.'+envPrint+'.ttlb:'+msTtlb+'|ms\n')
-		l.append('sd.article.phantom.'+envPrint+'.pass:1|c\n')
-	except:
-		print('something wrong with article: '+inputPII+' '+exOut[0])
-		try:
-		  if exOut[0].index('Error'):
-		    l.append('sd.article.phantom.'+envPrint+'.fail:1|c\n')
-		except:
-		  pass
-	"""
 	time.sleep(.25)
         
 	loop=loop-1
@@ -113,5 +90,5 @@ while endTime > int(time.time()):
         tmStmp=time.time()
         with open("articleCount.log", "a") as myfile:
           myfile.write(str(tmStmp)+'|'+count+'\n')
-   	print(count)
+   	#print(count)
    	UDPSock.sendto(count,addr)

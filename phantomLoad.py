@@ -3,11 +3,10 @@ import sys
 import urllib2
 import time
 
-users=int(sys.argv[1])
-PHOST=sys.argv[2]
+script=sys.argv[1]
+users=int(sys.argv[2])
 duration=float(sys.argv[3])
-renderArticles=sys.argv[4]
-env=sys.argv[5]
+env=sys.argv[4]
 testDurationSecs=str(int(duration*3600))
 
 # # Find hostname to use for passing to webdriver
@@ -19,8 +18,9 @@ testDurationSecs=str(int(duration*3600))
 # print(instID)
 
 while users>0:
-	#print 'I have entered the loop'
-        	ex=Popen('python ~/phantomRun.py '+PHOST+' '+testDurationSecs+' '+renderArticles+' '+env+ '&',shell=True,close_fds=True)
-        	users=users-1
+  #print 'I have entered the loop'
+  ex=Popen('python '+script+' '+env+' '+testDurationSecs+'&',shell=True,close_fds=True)
+  users=users-1
+  time.sleep(10)
 	
 

@@ -97,7 +97,7 @@ function getMetrics(page) {
 	var ns=wpt.navigationStart;
 	var ttfb=wpt.responseStart-ns;
 	var sr=wpt.domContentLoadedEventEnd-ns;
-	console.log('TTFB:'+ttfb+' startRender:'+sr);
+	//console.log('TTFB:'+ttfb+' startRender:'+sr);
 }
 
 
