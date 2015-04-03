@@ -12,7 +12,7 @@ count=ex.communicate()[0]
 running=int(count.splitlines()[0])-1
 
 if '.xlarge' in instType:
-   total=18
+   total=22
 if '.large' in instType:
    total=8  
 
@@ -20,6 +20,6 @@ toRun=total-running-1
 print 'toRun: '+str(toRun)
 
 if toRun > 1:
-  ex=Popen('python phantomLoadPvsS.py '+str(toRun)+' www.sciencedirect.com 6 0 cert&',shell=True,close_fds=True)
+  ex=Popen('python phantomLoad.py '+str(toRun)+' 1.5 cdc318-www.sciencedirect.com&',shell=True,close_fds=True)
 
 
