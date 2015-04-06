@@ -19,7 +19,9 @@ if '.large' in instType:
 toRun=total-running-1
 print 'toRun: '+str(toRun)
 
+runThis='python phantomLoad.py phantomRun.py '+str(toRun)+' 1.5 cdc318-www.sciencedirect.com&'
+print 'runThis:'+runThis
 if toRun > 1:
-  ex=Popen('python phantomLoad.py '+str(toRun)+' 1.5 cdc318-www.sciencedirect.com&',shell=True,close_fds=True)
+  ex=Popen(runThis,shell=True,close_fds=True)
 
 
