@@ -88,7 +88,7 @@ while endTime > int(time.time()):
    	# print(statsDdata)
    	# UDPSock.sendto(statsDdata,addr)
         tmStmp=time.time()
-        with open("articleCount.log", "a") as myfile:
-          myfile.write(str(tmStmp)+'|'+count+'\n')
+        #  with open("articleCount.log", "a") as myfile:
+        #    myfile.write(str(tmStmp)+'|'+count+'\n')
    	#print(count)
    	UDPSock.sendto(count,addr)
