@@ -102,70 +102,67 @@ def newBrowser(base):
 	print('new Browser - '+base)
 
 #------------------------------------------------------
-# Gather Performance data to send
+# collect metrics to pass into statsD/influxDB
 #------------------------------------------------------
-def metricsCollect(dtitl,d,base):
-	# mets=''
-	# metrics=['responseStart','responseEnd','domInteractive','loadEventEnd','domContentLoadedEventEnd']
-	metrics={'ttfb':'responseStart','html':'responseEnd','pgi':'domInteractive','pgl':'loadEventEnd','startRender':'domContentLoadedEventEnd'}
-	# print(dtitl+' - trying metricsCollect')
-	try:
-		# print('try some script execute')
-		navS = d.execute_script('return performance.timing.navigationStart')
-		# print('navS: '+str(navS))
-		# print('try getting other metrics')
-		for i in metrics:
-			compVal=int(d.execute_script('return performance.timing.'+metrics[i])-navS)
-			if(compVal>0):
-				l.append('sd.Selenium.'+base+'.'+dtitl+'.'+str(i)+':'+str(compVal)+'|ms\n')
-		
-		try:
-			prsT=[]
-			prs=d.execute_script('return prs')
-			try:
-				prsT.append(prs['pcr'])
-			except:
-				pass
-			try:
-				prsT.append(prs['pcr_nav'])
-			except:
-				pass
-			try:
-				prsT.append(prs['abs_end'])
-			except:
-				pass
-			pcrT=sorted(prsT)[len(prsT)-1]
-		except:
-			pcrT=0
-		"""
-		if (dtitl.find('Content_Delivery') != -1):
-			try:
-				# print('try return prs.abs_end')
-				pcrT=d.execute_script("return prs.abs_end")
-			except:
-				pcrT=0
-		else:
-			# print('found a different page! - '+dtitl)
-			try:
-				prs=execute_script('return prs')
-				prsT=[]
-				prsT.append(prs['pcr'])
-				try:
-					prsT.append(prs['pcr_nav'])
-				except:
-					pass
-				pcrT=sorted(prsT)[len(prsT)-1]
-			except:
-				pcrT=0
-		"""
-		if pcrT > navS:
-			l.append('sd.Selenium.'+base+'.'+dtitl+'.pcr:'+str(int(pcrT-navS))+'|ms\n')
-		# print l
-		# print('l '+l)
-	except:
-		# print('scripts no workie')
-		pass
-	return l
+def metricsCollect(dtitl,d):#,baseIn):
+    print('in metricsCollect')
+    l=[]
+    l.append('sd.Selenium.'+base+'.'+titl+'.pass:1|c\n')
+    metrics={'ttfb':'responseStart','html':'responseEnd','pgi':'domInteractive','pgl':'loadEventEnd','startRender':'domContentLoadedEventEnd'}
+    try:
+        navS = d.execute_script('return performance.timing.navigationStart')
+        for i in metrics:
+            compVal=int(d.execute_script('return performance.timing.'+metrics[i])-navS)
+            if(compVal>0):
+                l.append('sd.Selenium.'+base+'.'+dtitl+'.'+str(i)+':'+str(compVal)+'|ms\n')
+
+        try:
+            prsT=[]
+            prs=d.execute_script('return prs')
+            try:
+                prsT.append(prs['pcr'])
+            except:
+                pass
+            try:
+                prsT.append(prs['pcr_nav'])
+            except:
+                pass
+            try:
+                prsT.append(prs['abs_end'])
+            except:
+                pass
+            pcrT=sorted(prsT)[len(prsT)-1]
+        except:
+            pcrT=0
+        if pcrT > navS:
+            l.append('sd.Selenium.'+base+'.'+dtitl+'.pcr:'+str(int(pcrT-navS))+'|ms\n')
+
+        for i in prs:
+            if str(i).find('scr_')>-1:
+                print i
+                l.append('sd.Selenium.'+base+'.'+dtitl+'.'+i+':'+str(int(prs[i]-navS))+'|ms\n')
+    except:
+        pass
+
+    # print('l is:')
+    # print(l)
+    # print 'join statsDdata'
+    statsDdata=''.join(l)
+    # print('here is statsDdata')
+    print(statsDdata)
+
+    # try:
+    #   print('try to send UDP message')
+    #   print UDPSock.sendto(statsDdata,addr)
+    
+    # except:
+    #   print('UDP send failed')
+    #   pass
+
+    d.execute_script("SDM.ep.prDevice='http://rumserver-479135682.us-west-2.elb.amazonaws.com'")
+    d.execute_script("SDPA.sendPage()")
+    # d.execute_script("SDPA.sendIndex()")
+    d.execute_script("SDPA.pcrSend()")
 
 #------------------------------------------------------
 #       Function to execute a request or page interaction
