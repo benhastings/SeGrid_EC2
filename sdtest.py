@@ -10,7 +10,7 @@ import sys
 import urllib2
 import socket
 
-#from metricsCollect import metricsCollect
+# from metricsCollect import metricsCollect
 
 #------------------------------------------------------------
 #--- Get Interactive Input for number of loops to execute ---
@@ -18,15 +18,11 @@ import socket
 timeToRun=int(sys.argv[1])
 endTime=int(time.time()+timeToRun)
 
-#--- Browser definition for Grid usage ----------
-browser = sys.argv[2]
-
 #--- SeGrid Hub designation --------------------
-hub = sys.argv[3]
+hub = 'localhost'
 
-instID = sys.argv[4]
 
-l=[]
+stats=''
 #statsDHost='ec2-54-80-6-76.compute-1.amazonaws.com'
 statsDHost='statsd.elsst.com'
 """
@@ -86,7 +82,12 @@ def egress():
 # Function to send error details for tracking
 #------------------------------------------------------
 def errorReport(hName,titlN,msg):
-	l.append('sd.Selenium.error.'+base+'.'+titlN+':1|c\n')
+	# l.append('sd.Selenium.error.'+base+'.'+titlN+':1|c\n')
+	try:
+	 	stats
+		stats+='sd.Selenium.error.'+base+'.'+titlN+':1|c\n'
+	except:
+		stats='sd.Selenium.error.'+base+'.'+titlN+':1|c\n'
 	try:
 	  print('error - '+msg+' '+titlN+' '+driver.title)
 	except:
@@ -151,18 +152,20 @@ def metricsCollect(dtitl,d):#,baseIn):
     # print('here is statsDdata')
     print(statsDdata)
 
-    # try:
-    #   print('try to send UDP message')
-    #   print UDPSock.sendto(statsDdata,addr)
+    try:
+      print('try to send UDP message')
+      print UDPSock.sendto(statsDdata,addr)
     
-    # except:
-    #   print('UDP send failed')
-    #   pass
+    except:
+      print('UDP send failed')
+      pass
 
     d.execute_script("SDM.ep.prDevice='http://rumserver-479135682.us-west-2.elb.amazonaws.com'")
     d.execute_script("SDPA.sendPage()")
     # d.execute_script("SDPA.sendIndex()")
     d.execute_script("SDPA.pcrSend()")
+    time.sleep(10)
+
 
 #------------------------------------------------------
 #       Function to execute a request or page interaction
@@ -192,11 +195,12 @@ def getPage(resource):
 		else:
 			# l.append('sd.Selenium.'+base+'.'+titl+'.pass:1|c\n')
 			time.sleep(.5)
-			# print('trying metricsCollect')
+			print('trying metricsCollect')
 			try:
-				# print('try to append to stats')
-				metricsCollect(titl,driver,base)
-				
+				print('try to append to stats')
+				# testHolder=metricsCollect(titl,driver,base)
+				metricsCollect(titl,driver)
+				# UDPSock.sendto(testHolder,addr)
 				# print(testHolder)
 				# stats +=''.join(testHolder)
 				# print(stats)
@@ -231,8 +235,11 @@ while endTime > time.time():
 	try:
 		# stats=''
 		# print('loading browser')
-		driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
+		#driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities={"browserName": browser})
 		#driver=webdriver.Chrome()
+		options=webdriver.ChromeOptions()
+        	options.add_argument('--disable-logging')
+        	driver=webdriver.Remote("http://"+hub+":4200/wd/hub",desired_capabilities=options.to_capabilities())	
 		# print('wait for it...')	
 		# print datetime.datetime.now()
 		time.sleep(.25)
@@ -300,7 +307,7 @@ while endTime > time.time():
 		#-------------------------------------------------
 		#      Add looping structure to minimize browser churn
 		#-------------------------------------------------
-		browserLoop=2				
+		browserLoop=4				
 		while(browserLoop > 0):
 			#-------------------------------------------------
 			#       View Article(s) with scrolling where possible
@@ -328,7 +335,7 @@ while endTime > time.time():
 				titl = 'Content_Delivery'
 				#sStart = time.time()
 				try:
-					#print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
+					print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
 					getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
 				except urllib2.URLError:
 					time.sleep(.25)	
@@ -336,7 +343,7 @@ while endTime > time.time():
 				
 				try:
 					dtitl=driver.title[:50]
-					# print(dtitl[:50])
+					print(dtitl[:50])
 				except:
 					egress()
 					exit
@@ -397,40 +404,27 @@ while endTime > time.time():
 					artLoop = artLoop-1
 					idx = idx+1
 	
-				# print 'join statsDdata'	
-				statsDdata=''.join(l)
-				# print('here is statsDdata')
-				print(statsDdata)
-				try:
-					print('try to send UDP message')
-					print UDPSock.sendto(statsDdata,addr)
-				
-				except:
-					print('UDP send failed')
-					pass
-				l=[]
-			
 			browserLoop=browserLoop-1
 			# print(browserLoop)
 		
-			"""
 			# print 'join statsDdata'	
-			statsDdata=''.join(l)
+			# statsDdata=''.join(l)
 			# print('here is statsDdata')
-			# print(statsDdata)
-			try:
-				print('try to send UDP message')
-				print UDPSock.sendto(statsDdata,addr)
-				
-			except:
-				print('UDP send failed')
-				pass
-			l=[]
-			"""
+			print(stats)
+			#UDPSock.sendto(statsDdata,addr)
+			# l=[]
+			stats=''
 		loop = loop+1
 		idx=idx+1
 		egress()
 	except:
+		if(len(stats) > 0):
+			#statsDdata=''.join(l)
+			# print('here is statsDdata')
+			print(stats)
+			
+			#UDPSock.sendto(statsDdata,addr)
+
 		# print('loading browser failed')
 		# print time.time()
 		# print titl
@@ -438,4 +432,3 @@ while endTime > time.time():
 		#print(statsDdata)
 		time.sleep(5)
 		pass
-
