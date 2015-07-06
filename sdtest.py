@@ -126,6 +126,7 @@ def metricsCollect(dtitl,d):#,baseIn):
                 pass
             try:
                 prsT.append(prs['pcr_nav'])
+                l.append('sd.Selenium.'+base+'.'+dtitl+'.pcr_nav:'+str(int(prs['pcr_nav']-navS))+'|ms\n')
             except:
                 pass
             try:
