@@ -159,12 +159,13 @@ def metricsCollect(dtitl,d):#,baseIn):
     except:
       print('UDP send failed')
       pass
-
+    d.execute_script("SDM.ep.prDeviceTemp=SDM.ep.prDevice")
     d.execute_script("SDM.ep.prDevice='http://rumserver-479135682.us-west-2.elb.amazonaws.com'")
     d.execute_script("SDPA.sendPage()")
     # d.execute_script("SDPA.sendIndex()")
     d.execute_script("SDPA.pcrSend()")
-    time.sleep(10)
+    d.execute_script("SDM.ep.prDevice=SDM.ep.prDeviceTemp")
+    time.sleep(.25)
 
 
 #------------------------------------------------------
