@@ -305,117 +305,118 @@ while endTime > time.time():
 					egress()
 					exit
 	
-	
+		"""
 		#-------------------------------------------------
 		#      Add looping structure to minimize browser churn
 		#-------------------------------------------------
 		browserLoop=4				
 		while(browserLoop > 0):
-			#-------------------------------------------------
-			#       View Article(s) with scrolling where possible
-			#               View multiple articles in same session 33%
-			#-------------------------------------------------
-			artLoop = 5
-			"""
-			if (login%3==0):
-					artLoop=8
-			else:
-					artLoop=4
-			"""
-			# print ('artLoop: '+str(artLoop))
-			
-			#Comment out for sequential evaluation of articles
-			#idx = int(random.random()*499000)
-			
-			
-			while artLoop > 0:
-				#--- Define Random Value ---------------
-				idx = int(random.random()*piiCount)
-				idxPii=idx
-				# print('articleIDX:'+str(idx))
-				Pii=str(PII[idxPii]).strip('[\']')
-				titl = 'Content_Delivery'
-				#sStart = time.time()
-				try:
-					print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
-					getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
-				except urllib2.URLError:
-					time.sleep(.25)	
-					pass
-				
-				try:
-					dtitl=driver.title[:50]
-					print(dtitl[:50])
-				except:
-					egress()
-					exit
-				"""	
-				if artLoop > 0:
-					artLoop = artLoop-1
-					idx = idx+1
-				"""
-	
-				try:
-					#if (login%6 == 0):
-					if (artLoop%5 < 2):
-					# if (artLoop%5 < 6):
-						titl='Search_Results'
-						SrIdx = int(random.random()*100)%100
-						# print('trying search')	
-
-						srString=str(SRCH[SrIdx]).strip('[\']').decode('string_escape')
-						# print srString
-						try:
-							dtitl=driver.title#[:50]
-							# print 'dtitl: '+dtitl
-							# Article Page Search
-							s=driver.find_element_by_css_selector('input#quickSearch')
-							s.send_keys(srString)
-							getPage(driver.find_element_by_css_selector('input.submit').click())
-
-							# # Other Pages					
-							# s=d.find_element_by_id("qs_all")
-							# >>> s.send_keys('berries')
-							# >>> d.find_element_by_id("submit_search").click()
-
-						except:
-							# print ('Search form not found '+baseURL)
-							time.sleep(.5)
-							pass
-					#if (login%6 > 4):
-					if (artLoop%5 > 2):
-						#--- Load Browse List - "Category List" -------------
-						titl='Category_List'
-						# print('trying browse')	
-						getPage(driver.get("http://"+baseURL+"/science/journals"))
-	
-						#--- Load Journal Home Pages - "Category Home" ------
-						jrnLoop = 2
-						while jrnLoop > 0:
-							titl='Category_Home'
-							idx=idx+jrnLoop
-							jIdx=idx%120
-							# print('trying journal')	
-							getPage(driver.get("http://"+baseURL+"/science/journal/"+str(JRNL[jIdx]).strip('[\']')))
-							jrnLoop=jrnLoop-1
-				except:
-					egress()
-					exit
-					
-				if artLoop > 0:
-					artLoop = artLoop-1
-					idx = idx+1
-	
-			browserLoop=browserLoop-1
-			# print(browserLoop)
+		"""
+		#-------------------------------------------------
+		#       View Article(s) with scrolling where possible
+		#               View multiple articles in same session 33%
+		#-------------------------------------------------
+		artLoop = 5
+		"""
+		if (login%3==0):
+				artLoop=8
+		else:
+				artLoop=4
+		"""
+		# print ('artLoop: '+str(artLoop))
 		
-			# print 'join statsDdata'	
-			# statsDdata=''.join(l)
-			# print('here is statsDdata')
-			print(stats)
-			#UDPSock.sendto(statsDdata,addr)
-			# l=[]
-			stats=''
+		#Comment out for sequential evaluation of articles
+		#idx = int(random.random()*499000)
+		
+		
+		while artLoop > 0:
+			#--- Define Random Value ---------------
+			idx = int(random.random()*piiCount)
+			idxPii=idx
+			# print('articleIDX:'+str(idx))
+			Pii=str(PII[idxPii]).strip('[\']')
+			titl = 'Content_Delivery'
+			#sStart = time.time()
+			try:
+				print('try to get: '+"http://"+baseURL+"/science/article/pii/"+Pii)
+				getPage(driver.get("http://"+baseURL+"/science/article/pii/"+Pii))
+			except urllib2.URLError:
+				time.sleep(.25)	
+				pass
+			
+			try:
+				dtitl=driver.title[:50]
+				print(dtitl[:50])
+			except:
+				egress()
+				exit
+			"""	
+			if artLoop > 0:
+				artLoop = artLoop-1
+				idx = idx+1
+			"""
+
+			try:
+				#if (login%6 == 0):
+				if (artLoop%5 < 2):
+				# if (artLoop%5 < 6):
+					titl='Search_Results'
+					SrIdx = int(random.random()*100)%100
+					# print('trying search')	
+
+					srString=str(SRCH[SrIdx]).strip('[\']').decode('string_escape')
+					# print srString
+					try:
+						dtitl=driver.title#[:50]
+						# print 'dtitl: '+dtitl
+						# Article Page Search
+						s=driver.find_element_by_css_selector('input#quickSearch')
+						s.send_keys(srString)
+						getPage(driver.find_element_by_css_selector('input.submit').click())
+
+						# # Other Pages					
+						# s=d.find_element_by_id("qs_all")
+						# >>> s.send_keys('berries')
+						# >>> d.find_element_by_id("submit_search").click()
+
+					except:
+						# print ('Search form not found '+baseURL)
+						time.sleep(.5)
+						pass
+				#if (login%6 > 4):
+				if (artLoop%5 > 2):
+					#--- Load Browse List - "Category List" -------------
+					titl='Category_List'
+					# print('trying browse')	
+					getPage(driver.get("http://"+baseURL+"/science/journals"))
+
+					#--- Load Journal Home Pages - "Category Home" ------
+					jrnLoop = 2
+					while jrnLoop > 0:
+						titl='Category_Home'
+						idx=idx+jrnLoop
+						jIdx=idx%120
+						# print('trying journal')	
+						getPage(driver.get("http://"+baseURL+"/science/journal/"+str(JRNL[jIdx]).strip('[\']')))
+						jrnLoop=jrnLoop-1
+			except:
+				egress()
+				exit
+				
+			if artLoop > 0:
+				artLoop = artLoop-1
+				idx = idx+1
+
+		# browserLoop=browserLoop-1
+		# print(browserLoop)
+	
+		# print 'join statsDdata'	
+		# statsDdata=''.join(l)
+		# print('here is statsDdata')
+		print(stats)
+		#UDPSock.sendto(statsDdata,addr)
+		# l=[]
+		stats=''
 		loop = loop+1
 		idx=idx+1
 		egress()
